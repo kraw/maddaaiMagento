@@ -1,5 +1,18 @@
 <h1>Syrus Magento Maddaai </h1>
-<h2>Funzioni modulo </h2>
+<h2>Il tema utilizzato e Maddaai Theme - Parent di Magento Luma</h2>
+
+<h2>Elenco dei moduli sviluppati:</h2>
+<li>Syrus Drc_PreOrder</li>
+<li>Syrus_Bidrequest</li>
+<li>Syrus_Deadline</li>
+<li>Syrus_Deisableaccess</li>
+<li>Syrus_Navigation</li>
+<li>Syrus_Passwordrevocer</li>
+<li>Syrus_Remotelogin</li>
+<li>Syrus_Stores</li>
+<li>Syrus_Valutationproducts</li>
+
+<h3>Funzioni modulo Syrus Drc_PreOrder</h3>
 <ul><li>Modifica del bottone “Add to cart” a “Pre-Order”</li>
 <li>Gestione del pre-order: avviso ai consumatori quando il prodotto è disponibile </li>
 <li>Gestione dei preorder all’interno del backend del singolo negozio ed a livello globalev
@@ -37,3 +50,16 @@
 <code>rm -rf var/generation var/cache</code> #cancella i file generati da magento<br />
 <code>chmod -R 777 var/* </code>#imposta i permessi coretti per la cartella var<br />
 <code>chmod -R 777 pub/* </code>#imposta i permessi coretti per la cartella pub<br />
+
+<h3>Aggiornamenti Magneto</h3>
+<p>Per aggiornare la versione di Magento eseguire la seguente sequenza di commandi</p>
+<code>composer require magento/product-community-edition 2.0.2 --no-update<br />
+composer update<br />
+rm -rf var/di var/generation<br />
+php bin/magento cache:clean<br />
+php bin/magento cache:flush<br />
+php bin/magento setup:upgrade<br />
+php bin/magento setup:di:compile<br />
+php bin/magento indexer:reindex<br />
+</code>
+
