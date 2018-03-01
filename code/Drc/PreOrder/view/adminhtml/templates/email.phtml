@@ -1,0 +1,124 @@
+<?php
+
+$debug = 0;
+$prodotti = $block->prodotti();
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$StockState = $objectManager->get('\Magento\CatalogInventory\Api\StockStateInterface');
+
+
+$imageHelperFactory = $objectManager->create("\Magento\Catalog\Helper\ImageFactory");
+
+
+?>
+
+
+
+
+<div class="admin__data-grid-wrap" data-role="grid-wrapper">
+    <table class="data-grid data-grid-draggable" data-role="grid">
+       <thead>
+            <tr data-bind="">
+<th class="data-grid-th _sortable _draggable _ascend" data-bind="">
+    <span class="data-grid-cell-content" data-bind="">ID</span>
+</th>
+<th class="data-grid-th _draggable" data-bind="">
+    <span class="data-grid-cell-content" data-bind="">Miniatura</span>
+</th>
+
+<th class="data-grid-th _sortable _draggable" data-bind="">
+    <span class="data-grid-cell-content" data-bind="">Nome</span>
+</th>
+
+<th class="data-grid-th _sortable _draggable" data-bind="">
+    <span class="data-grid-cell-content" data-bind="">Prezzo</span>
+</th>
+
+<th class="data-grid-th _sortable _draggable" data-bind="">
+    <span class="data-grid-cell-content" data-bind="">#Bids</span>
+</th>
+
+
+<th class="data-grid-th _sortable _draggable" data-bind="">
+    <span class="data-grid-cell-content" data-bind="">#Soglia</span>
+</th>
+
+<th class="data-grid-th _sortable _draggable" data-bind="">
+    <span class="data-grid-cell-content" data-bind="">Azione</span>
+</th>
+	</tr>
+        </thead>
+        <tbody>
+            
+
+	<?php
+
+$store = $objectManager->get('Magento\Store\Model\StoreManagerInterface')->getStore();
+$base_url = $objectManager->get('Magento\Store\Model\StoreManagerInterface')
+            ->getStore(1)
+            ->getBaseUrl();
+
+foreach ($prodotti as $product){
+                                                                                                                                       
+      $name = $product->getName();
+      $id = $product->getId();
+      $price = $product->getPrice();
+      $bid_target = $product->getResource()->getAttribute("bid_target")->getFrontend()->getValue($product);
+      $soglia = $StockState->getStockQty($product->getId(), $product->getStore()->getWebsiteId());
+      $productImageUrl = $block->getUrl('pub/media/catalog').'product'.$product->getImage();     
+      $imageUrl = $store->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . 'catalog/product' . $product->getImage();
+
+                                                                                                                                       
+      if($debug){
+      	echo 'Name  =  '.$product->getName().'<br>';
+      	echo 'ID = '.$product->getId().'<br>';
+      	echo 'Price = '.$product->getPrice().'<br>';
+      	echo 'Bid target = '.$product->getResource()->getAttribute("bid_target")->getFrontend()->getValue($product).'<br>';	
+      	echo 'Soglia = '.$StockState->getStockQty($product->getId(), $product->getStore()->getWebsiteId()).'<br>';
+	echo 'URL image = '.$productImageUrl.'<br><br>';
+      } 
+
+	?>
+
+	<tr class="data-row" data-bind="" data-repeat-index="0">
+<td data-bind="">
+<div class="data-grid-cell-content" data-bind=""><?= $id ?></div>
+</td>
+
+<td data-bind="" class="data-grid-thumbnail-cell">
+<img class="admin__control-thumbnail" data-bind="" src="<?= $imageUrl ?>" alt="Iphone 7 Plus"></td>
+
+<td data-bind="">
+<div class="data-grid-cell-content" data-bind=""><?= $name ?></div>
+</td>
+
+<td data-bind="">
+<div class="data-grid-cell-content" data-bind=""><?= $price ?>&nbsp;€</div>
+</td>
+
+<td data-bind="">
+<div class="data-grid-cell-content" data-bind=""><?= $bid_target ?></div>
+</td>
+
+<td data-bind="">
+<div class="data-grid-cell-content" data-bind=""><?= $soglia ?></div>
+</td>
+
+<td data-bind="">
+<div class="data-grid-cell-content" data-bind="">
+
+<a href="<?= $base_url; ?>admin/catalog/product/edit/id/<?= $id; ?>">Modifica</a>		<br>
+<a href="">Email</a>
+
+</div>
+</td>
+
+            </tr>
+
+<?php } ?>
+
+
+        </tbody>
+    </table>
+</div>
+

@@ -1,0 +1,298 @@
+<?php
+
+$debug = 0;
+$prodotti = $block->conclusi();
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$StockState = $objectManager->get('\Magento\CatalogInventory\Api\StockStateInterface');
+
+
+$imageHelperFactory = $objectManager->create("\Magento\Catalog\Helper\ImageFactory");
+
+
+?>
+
+<style>
+.required{
+      color:red;
+	  padding-left:5px;
+}	
+</style>
+
+<div id="email_alert" style="display:none"><div class="messages"><div class="message message-success success"><div data-ui-id="messages-message-success">Email inviate correttamente.</div></div></div></div>
+
+
+
+<div class="admin__data-grid-wrap" data-role="grid-wrapper">
+    <table class="data-grid data-grid-draggable" data-role="grid">
+       <thead>
+            <tr data-bind="">
+<th class="data-grid-th _sortable _draggable" data-bind="">
+    <span class="data-grid-cell-content" data-bind="">ID</span>
+</th>
+<th class="data-grid-th _draggable" data-bind="">
+    <span class="data-grid-cell-content" data-bind="">Miniatura</span>
+</th>
+
+<th class="data-grid-th _sortable _draggable" data-bind="">
+    <span class="data-grid-cell-content" data-bind="">Nome</span>
+</th>
+
+<th class="data-grid-th _sortable _draggable" data-bind="">
+    <span class="data-grid-cell-content" data-bind="">Prezzo</span>
+</th>
+
+<th class="data-grid-th _sortable _draggable" data-bind="">
+    <span class="data-grid-cell-content" data-bind="">#Pagamenti</span>
+</th>
+
+<th class="data-grid-th _sortable _draggable" data-bind="">
+    <span class="data-grid-cell-content" data-bind="">Azione</span>
+</th>
+	</tr>
+        </thead>
+        <tbody>
+            
+
+	<?php
+
+$store = $objectManager->get('Magento\Store\Model\StoreManagerInterface')->getStore();
+$base_url = $objectManager->get('Magento\Store\Model\StoreManagerInterface')
+            ->getStore(1)
+            ->getBaseUrl();
+
+foreach ($prodotti as $product){
+                                                                                                                                       
+      $name = $product->getName();
+      $id = $product->getId();
+      $price = $product->getPrice();
+      $bid_payments = $product->getResource()->getAttribute("bid_payments")->getFrontend()->getValue($product);
+      $soglia = $StockState->getStockQty($product->getId(), $product->getStore()->getWebsiteId());
+      $productImageUrl = $block->getUrl('pub/media/catalog').'product'.$product->getImage();     
+      $imageUrl = $store->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . 'catalog/product' . $product->getImage();
+
+                                                                                                                                       
+      if($debug){
+      	echo 'Name  =  '.$product->getName().'<br>';
+      	echo 'ID = '.$product->getId().'<br>';
+      	echo 'Price = '.$product->getPrice().'<br>';
+      	echo 'Bid target = '.$product->getResource()->getAttribute("bid_target")->getFrontend()->getValue($product).'<br>';	
+      	echo 'Soglia = '.$StockState->getStockQty($product->getId(), $product->getStore()->getWebsiteId()).'<br>';
+	echo 'URL image = '.$productImageUrl.'<br><br>';
+      } 
+
+	?>
+
+	<tr class="data-row" data-bind="" data-repeat-index="0">
+<td data-bind="">
+<div class="data-grid-cell-content" data-bind=""><?= $id ?></div>
+</td>
+
+<td data-bind="" class="data-grid-thumbnail-cell">
+<img class="admin__control-thumbnail" data-bind="" src="<?= $imageUrl ?>" alt=""></td>
+
+<td data-bind="">
+<div class="data-grid-cell-content" data-bind=""><?= $name ?></div>
+</td>
+
+<td data-bind="">
+<div class="data-grid-cell-content" data-bind=""><?= $price ?>&nbsp;€</div>
+</td>
+
+<td data-bind="">
+<div class="data-grid-cell-content" data-bind=""><?= $bid_payments; ?>/<?= $soglia ?></div>
+</td>
+
+<td data-bind="">
+<div class="data-grid-cell-content" data-bind="">
+
+<a href="<?= $base_url; ?>admin/catalog/product/edit/id/<?= $id; ?>">Modifica</a>		<br>
+<a class="email" style="cursor:pointer" id="<?= $id ?>" >Email</a>	<br>
+<a class="utenti" style="cursor:pointer" id="<?= $id ?>">Utenti</a>
+
+</div>
+</td>
+
+            </tr>
+
+<?php } ?>
+
+
+        </tbody>
+    </table>
+</div>
+
+
+<div style="display:none" class="popup_content">Invia un'email a tutti gli utenti che partecipano a questo GDA<br><br>
+	
+	<table cellspacing="5" class="form-list" style="border-spacing:0 15px;border-collapse:separate;width:100%">
+		<tr>
+			<td style="width:10%">Titolo<span class="required">*</span></td><td><input type="text" name="titolo" id="titolo" style="width:95%"></td>
+		</tr>
+		<tr>
+			<td style="width:10%">Oggetto<span class="required">*</span></td><td><input type="text" name="oggetto" id="oggetto" style="width:95%"></td>
+		</tr>
+		<tr>
+			<td style="width:10%">Messaggio<span class="required">*</span></td><td><textarea class="admin__control-textarea" name="email_text" cols="" style="width:95%" rows="6" aria-describedby="" placeholder="" id="email_text"></textarea></td>
+		</tr>
+	</table>
+	
+	Includi riepilogo GDA all'interno della e-mail <input type="checkbox" name="riepilogo" id="riepilogo" >
+	
+
+</div>
+
+
+<div style="display:none" class="popup_content_utenti">
+
+
+</div>
+
+<script type="text/javascript">
+
+
+	
+
+	require(['jquery','Magento_Ui/js/modal/modal'], function($,modal){
+
+
+		$( document ).ready(function($,modal){
+			
+		
+		   var base_url = "<?= $base_url; ?>";
+
+
+              $(".email").click( function(){ 
+					   
+
+			var id_product = $(this).attr("id");
+				$('textarea#email_text').val("");
+				$('#titolo').val("");
+				$('#oggetto').val("");
+				$('#riepilogo').prop('checked', true);
+				  
+				$('textarea#email_text').css("border","");
+				$('#titolo').css("border","");
+				$('#oggetto').css("border","");
+
+
+			var options = {
+            	            type: 'popup',
+	                    responsive: true,
+            	            innerScroll: true,
+	                    title: 'Email',
+        	            buttons: [{
+	                    text: $.mage.__('Invia'),
+                	    class: 'primary',
+	                    click: function () {
+				
+				
+				var email_text = $('textarea#email_text').val();
+				var titolo = $('#titolo').val();
+				var oggetto = $('#oggetto').val();
+				var riepilogo = $('#riepilogo').val();
+							
+							if(titolo == ""){
+								console.log("titolo vuoto");
+								$('#titolo').css('border','red solid 1px'); 
+								$('#email_text').css("border","");
+								$('#oggetto').css("border","");
+
+								return;}
+							if(oggetto == ""){
+								console.log("oggetto vuoto");
+								$('#oggetto').css('border','red solid 1px'); 
+								$('#email_text').css("border","");
+								$('#titolo').css("border","");
+
+								return;}
+							if(email_text == ""){
+								console.log("testo vuoto");
+								$('#email_text').css('border','red solid 1px');
+								$('#titolo').css("border","");
+								$('#oggetto').css("border","");
+
+								return;}
+
+				$.post("/preorder/sendmail/", {id_product : id_product, email_text : email_text, titolo:titolo, oggetto:oggetto, riepilogo:riepilogo}, function( data ){
+
+					console.log(data);
+					console.log("email inviata");
+					$('#email_alert').css('display','');
+		       		$("#email_alert").fadeOut(7000);
+
+
+				});			
+	
+	
+        	             this.closeModal();
+	                	    }
+        	        	}]
+		            };
+		
+
+			$(".popup_content").modal(options).modal('openModal');	
+			
+		});
+			
+                   $(".utenti").click( function(){ 
+
+			var id_product = $(this).attr("id");
+					   							
+							$.post("/preorder/sendmail/utenti", {id_product : id_product}, function( data ){
+
+								console.log(data);
+								var dati = JSON.parse(data);
+								
+								var title="Utenti appartenenti al GDA <br><br>"
+								
+								var start_table="<table class='data-grid data-grid-draggable'> \
+										   <thead><tr><th>Nome</th><th>Cognome</th><th>Email</th><th>Profilo</th></tr></thead><tbody>";
+								
+								var body = "";
+								
+								for(var k in dati.data){
+									var nome = dati.data[k].nome;
+									var cognome = dati.data[k].cognome;
+									var email = dati.data[k].email;
+									var url = "<?php echo $this->getUrl('customer/index/edit', ['id' => 1]); ?>";
+									url = url.replace(/id\/[0-9]+\//g,"id/"+k+"/");
+									console.log(url);
+									
+									body+="<tr><td>"+nome+"</td><td>"+cognome+"</td><td>"+email+"</td><td><a href='"+url+"'>Visualizza</a></td></tr>";
+								}
+								
+								var end_table = "</tbody></table>";
+								
+								$(".popup_content_utenti").html(title+start_table+body+end_table);
+
+							});		
+
+
+			var options = {
+            	            type: 'popup',
+	                    responsive: true,
+            	            innerScroll: true,
+	                    title: 'Utenti',
+        	            buttons: [{
+	                    text: $.mage.__('Chiudi'),
+                	    class: '',
+	                    click: function () {
+		
+        	             this.closeModal();
+	                	    }
+        	        	}]
+		            };
+		
+
+			$(".popup_content_utenti").modal(options).modal('openModal');	
+			
+		});
+			
+
+			
+	     });//end document ready
+	});
+
+
+</script>

@@ -1,0 +1,98 @@
+<?php
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php /** @var $block \Magento\Swatches\Block\Product\Renderer\Configurable */ ?>
+<div class="swatch-opt-<?php /* @escapeNotVerified */ echo $block->getProduct()->getId() ?>"></div>
+<script>
+    require(["jquery", "jquery/ui", "Magento_Swatches/js/swatch-renderer"], function ($) {
+        $('.swatch-opt-<?php /* @escapeNotVerified */ echo $block->getProduct()->getId() ?>').SwatchRenderer({
+            selectorProduct: '.product-item-details',
+            onlySwatches: true,
+            enableControlLabel: false,
+            numberToShow: <?php /* @escapeNotVerified */ echo $block->getNumberSwatchesPerProduct(); ?>,
+            jsonConfig: <?php /* @escapeNotVerified */ echo $block->getJsonConfig(); ?>,
+            jsonSwatchConfig: <?php /* @escapeNotVerified */ echo $block->getJsonSwatchConfig(); ?>,
+            mediaCallback: '<?php /* @escapeNotVerified */ echo $block->getMediaCallback() ?>'
+        });
+    });
+</script>
+<?php $data = $block->getJsonConfig();
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$logger=$objectManager->create('\Psr\Log\LoggerInterface');
+$logger->addDebug(json_encode($data));
+$baseurl=$block->getUrl("preorder/configurableproduct");  ?>
+<script type="text/javascript">
+    require(['jquery'],function(jQuery){
+        jQuery(window).load(function() {
+           
+            var json = <?php echo $data ?>;
+            var option_data_select={};
+            var option_data_swatch={};
+            var output = {};
+            var parentId='';
+
+            function jsonconcat(option_data_select,option_data_swatch){
+                output = jQuery.extend(option_data_select, option_data_swatch);
+              
+             
+           
+              
+           
+               jQuery.each(json, function (key, data) {
+                if (data==parentId) {
+                   jQuery.each(json.index, function (key, data) {
+                    var product_id = JSON.stringify(output) === JSON.stringify(data);
+                    if(product_id){
+                        jQuery.ajax({
+                        type: "POST",
+                        url: "<?php echo $baseurl; ?>product",
+                        data: "product_id="+key,
+                        success: function(result){    
+                          if(result.false!='false' && result.outofstock!='Out Of Stock'){
+                                obj=JSON.parse(result); 
+                                  jQuery('input:hidden[value="'+parentId+'"]').next().next().next().find('span').text(obj.buttontxt);                             
+                            }
+                             else if(result.outofstock == 'Out Of Stock'){
+                                var txt = '<?php echo __('Add To Cart') ?>';
+                                jQuery('input:hidden[value="'+parentId+'"]').next().next().next().find('span').text(txt);
+                              
+                            }
+                            else{
+                                var txt = '<?php echo __('Add To Cart') ?>';
+                               jQuery('input:hidden[value="'+parentId+'"]').next().next().next().find('span').text(txt);
+                            }  
+                         } 
+                        });
+
+                    } 
+
+                });
+            }
+        });
+           }
+
+            /*jQuery(document).on('change', '.swatch-select', function(e) {
+
+                var value= jQuery(this).children(":selected").attr("option-id");
+    
+                var id=jQuery(this).parent().parent().attr('attribute-id');
+     
+                option_data_select[id]=value;
+   
+                jsonconcat(option_data_select,option_data_swatch);
+            });*/
+            jQuery(document).on('click', '.swatch-option', function(e){
+                var count=0;
+                var value = jQuery(this).attr('option-id');
+                var id=jQuery(this).parent().parent().attr('attribute-id');
+                parentId=jQuery(this).parent().parent().parent().prev().attr('data-product-id');
+                option_data_swatch[id]=value;
+               
+                jsonconcat(option_data_select,option_data_swatch);
+            });
+        });
+    });
+</script>

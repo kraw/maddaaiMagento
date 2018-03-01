@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="sales_order_transactions_grid_block"/>
+    <head>
+        <link src="Magento_Sales::js/bootstrap/order-create-index.js"/>
+        <link src="Magento_Sales::js/bootstrap/order-post-action.js"/>
+    </head>
+    <update handle="sales_order_item_price"/>
+    <body>
+        <referenceContainer name="left">
+           
+              <referenceBlock  name="column_name">
+                <action method="setTemplate" ifconfig="drc_preorder_setting/general/active" >
+                    <argument name="template" xsi:type="string">Drc_PreOrder::order/name.phtml</argument>
+                </action>
+            </referenceBlock>                  
+                </referenceContainer>
+        <referenceBlock name="order_items">
+           
+            <referenceBlock  name="column_name_grouped">
+                <action method="setTemplate" ifconfig="drc_preorder_setting/general/active" >
+                    <argument name="template" xsi:type="string">Drc_PreOrder::order/name.phtml</argument>
+                </action>
+            </referenceBlock>
+            
+            <referenceBlock  name="column_name_downloadable">
+                <action method="setTemplate" ifconfig="drc_preorder_setting/general/active" >
+                    <argument name="template" xsi:type="string">Drc_PreOrder::order/downloadable/name.phtml</argument>
+                </action>
+            </referenceBlock>
+
+            <referenceBlock  name="bundle">
+                <action method="setTemplate" ifconfig="drc_preorder_setting/general/active" >
+                    <argument name="template" xsi:type="string">Drc_PreOrder::order/bundle/renderer.phtml</argument>
+                </action>
+            </referenceBlock> 
+
+        </referenceBlock>
+         <!-- <referenceBlock name="order_items">
+            <block class="Magento\Bundle\Block\Adminhtml\Sales\Order\View\Items\Renderer" as="bundle" template="sales/order/view/items/renderer.phtml"/>
+        </referenceBlock> -->
+                   
+    </body>
+</page>

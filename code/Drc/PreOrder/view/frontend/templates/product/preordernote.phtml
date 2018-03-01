@@ -1,0 +1,65 @@
+<?php
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php /* @var $block \Magento\Catalog\Block\Product\View\AbstractView */?>
+<?php $_product = $block->getProduct() ?>
+<?php 
+$id=$_product->getId();
+$productStock = $block->getStockItem($id);
+$backorderStatus = $productStock->getBackorders();
+$type=$_product->getTypeId(); 
+if ($type == 'grouped') {
+
+        $associatedProducts =$_product->getTypeInstance()->getAssociatedProducts($_product);
+    foreach ($associatedProducts as $_item){
+        $id = $_item->getEntityId(); 
+        $productStock = $block->getStockItem($id);
+       
+        if (($productStock->getBackorders() == '4') && (!$_item->IsSalable())) {
+           $flag=true;
+        }
+    } 
+
+
+} 
+$active=$this->helper('Drc\PreOrder\Helper\Check')->checkEnable();
+
+?>      
+<?php if ($block->displayProductStockStatus()): ?>
+    
+    <?php if (($_product->isAvailable()) || (($active==1) AND ((!$_product->isAvailable()) AND ($backorderStatus=='4')) AND ($type!='downloadable')) ): ?>
+    	<?php if(($active==1) AND (($backorderStatus=='3') || ((!$_product->isAvailable()) AND ($backorderStatus=='4') ))): ?>
+	        <div class="stock available" title="<?php /* @escapeNotVerified */ echo __('Availability') ?>">
+            <?php if ($_product->getData('preorder note') != '') : ?>
+                <span><?php /* @escapeNotVerified */ echo $_product->getData('preorder note'); ?></span>
+            <?php elseif ($block->getPreorderNote() != '') : ?>
+                <span><?php /* @escapeNotVerified */ echo __($block->getPreorderNote()); ?></span>
+            <?php else : ?>
+                <span><?php /* @escapeNotVerified */ echo __('available soon...!'); ?></span>
+            <?php endif; ?>
+            </div>
+    	<?php else: ?>
+    		<div class="stock available" title="<?php /* @escapeNotVerified */ echo __('Availability'); ?>">
+            <span><?php /* @escapeNotVerified */ echo __('In stock') ?></span>
+        </div>
+    <?php endif; ?>
+    
+    <?php else : ?>
+        <div class="stock unavailable" title="<?php /* @escapeNotVerified */ echo __('Availability') ?>">
+         <?php //if($flag): ?>
+            <span><?php /* @escapeNotVerified */ //echo __('In stock') ?></span>
+        <?php //else: ?> 
+            <span><?php /* @escapeNotVerified */ echo __('Out of stock') ?></span>
+        <?php //endif ?>
+            
+       
+            
+        </div>
+    <?php endif; ?>
+<?php endif; ?>

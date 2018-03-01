@@ -1,0 +1,17 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="admin">
+        <route frontName="bids" id="bids" >
+            <module name="Drc_PreOrder" />
+        </route>
+        <route frontName="bids_config" id="preorder_config" >
+            <module name="Drc_PreOrder" />
+        </route>
+		<route frontName="valutation" id="valutation" >
+	    	<module name="Drc_PreOrder" />
+		</route>
+		<route id="gda" frontName="gda">
+            <module name="Drc_PreOrder" />
+        </route>
+    </router>
+</config>

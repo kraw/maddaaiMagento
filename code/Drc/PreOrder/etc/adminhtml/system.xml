@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="drc_preorder" translate="label" sortOrder="10">
+            <label>Syrus - GDA</label>
+        </tab>
+        <section id="drc_preorder_setting" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Impostazioni</label>
+            <tab>drc_preorder</tab>
+            <resource>Drc_PreOrder::config</resource>
+             <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Generali</label>
+                <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Attivo</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>   
+                </field>    
+            </group>
+			
+			<group id="creditlimit" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Credit Limit</label>
+                <field id="creditlimit" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Soglia</label>
+                </field>    
+            </group>
+			
+			
+            <group id="display" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Opzioni di Visualizzazione</label>
+                <field id="button_text" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Pulsante Aggiungi al Carello</label>
+                    <comment>Display on button text instead of 'Add To Cart'.</comment>
+                </field>
+                <field id="preorder_note" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Default GDA Note</label>
+                    <comment>Display note in place of 'In stock/Out of stock' status if preorder note attribute not set.</comment>
+                </field>
+                <field id="preorder_warning" translate="label" type="textarea" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>GDA Warning</label>
+                     <comment>Display message on customer order information.</comment>
+                </field>
+		<field id="datetovisualize" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                  <label>Giorni mancanti alla scadenza per la visualizzazione del timer</label>
+                  <validate>required-entry validate-number</validate>
+                  <comment>Visualizza il timer del GDA entro tot giorni dalla scadenza del GDA stesso</comment>
+                </field>
+            </group>
+            <group id="preorderemail" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>GDA Email Alerts</label>
+                <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Attivo</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                      <comment>set to 'yes' if you want to notify customer when product become available.</comment>
+                </field>
+                
+                 <field id="preordertemplate" translate="label comment" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Email Template</label>
+                     <comment>To add a custom template, go to Marketing -> Email Templates -> Add New Template and load "Pre-Order Alert" (the default template).</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                </field> 
+                <field id="preorderidentity" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Email Sender</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
+
+                </field> 
+            </group> 
+             <group id="preorderorderemail" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Custom "New Order" Email</label>
+                <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>set to 'yes' if you want to notify custom order email which contain pre-order items.</comment>
+                </field>
+                
+                 <field id="preordertemplate" translate="label comment" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Email Template</label>
+                    <comment>To add a custom template, go to Marketing -> Email Templates -> Add New Template and load “New Order with Pre-Order” (the default template).</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                </field>   
+            </group> 
+            <group id="preorderinvoiceemail" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Custom "New Invoice" Email</label>
+                <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>set to 'yes' if you want to notify custom order invoice email when order contain pre-order items.</comment>
+                </field>
+                
+                 <field id="preordertemplate" translate="label comment" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Email Template</label>
+                    <comment>To add a custom template, go to Marketing -> Email Templates -> Add New Template and load “New Invoice with Pre-Order” (the default template).
+                    </comment>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                </field>   
+            </group>  
+        </section>
+    </system>
+</config>

@@ -1,0 +1,43 @@
+<?php
+$sectionId = "drc_preorder_setting";
+$groupId = "creditlimit";
+$fieldId = "creditlimit";
+$configPath = $sectionId.'/'.$groupId.'/'.$fieldId;
+
+$credit = \Magento\Framework\App\ObjectManager::getInstance()
+   ->get('Magento\Framework\App\Config\ScopeConfigInterface')
+   ->getValue($configPath);
+
+  if(isset($_GET['er']) && $_GET['er'] == 3){
+    ?>
+    <div class="message-error error message"><div>
+      Con le adesioni passate e/o con gli attuali prodotti nel carrello, superi il credit limite mensile di <?= $credit ?>€<br>
+      <a href="/">Torna alla Home</a>
+    </div></div>
+    <?php
+  }
+  if(isset($_GET['er']) && $_GET['er'] == 4){
+    ?>
+    <div class="message-error error message"><div>
+      Il prezzo del prodotto supera il credit mensile di <?= $credit ?>€<br>
+      <a href="/">Torna alla Home</a>
+    </div></div>
+    <?php
+  }
+  if(isset($_GET['er']) && $_GET['er'] == 5){
+    ?>
+    <div class="message-error error message"><div>
+      Hai già aderito al GDA<br>
+      <a href="/">Torna alla Home</a>
+    </div></div>
+    <?php
+  }
+  if(!isset($_GET['er'])){
+    ?>
+    <div class="message-error error message"><div>
+      Il prodotto ha raggiunto il bid e non sei autorizzato ad acquistarlo se non hai partecipato al bid<br>
+      <a href="/">Torna alla Home</a>
+    </div></div>
+    <?php
+  }
+?>

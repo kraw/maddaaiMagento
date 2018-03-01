@@ -1,0 +1,16 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+    <update handle="customer_account"/>
+    <body>
+        <referenceBlock name="page.main.title">
+            <action method="setPageTitle">
+                <argument translate="true" name="title" xsi:type="string">Gruppi di Acquisto</argument>
+            </action>
+         </referenceBlock>
+         <referenceContainer name="content">
+             <block class="Drc\PreOrder\Block\Gda" name="gda" template="Drc_PreOrder::gda.phtml">
+				 <!--              <block class="Magento\Framework\View\Element\Template" name="gda" template="Drc_PreOrder::gda.phtml">
+ -->
+             </block>
+        </referenceContainer>
+    </body>
+</page>

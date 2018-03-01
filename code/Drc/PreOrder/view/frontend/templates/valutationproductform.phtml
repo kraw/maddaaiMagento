@@ -1,0 +1,35 @@
+<?php
+  if($block->isLogged()):
+ ?>
+  <form  method="post">
+    <input type="hidden" name="name" value="<?php echo $block->getCustomerName(); ?>" >
+    <input type="hidden" name="surname" value="<?php echo $block->getCustomerSurname(); ?>" >
+    <input type="hidden" name="store" value="<?php echo $block->getStoreName(); ?>" >
+    <div class="row">
+      <div class="col-lg-5">
+        <label for="link">Link</label>
+        <input  placeholder="Link delloggetto in vendita" type="text"
+          id="link"
+          name="link"
+          value="">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-5">
+        <label for="price">Prezzo</label>
+        <input
+          placeholder="Prezzo in Euro"
+          type="number"
+          step="0.01"
+          name="price"
+          id="price"
+          value="">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-5">
+        <button type="submit" class="btn btn-main" name="button">Invia</button>
+      </div>
+    </div>
+  </form>
+<?php endif; ?>

@@ -1,0 +1,92 @@
+<?php
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+//"swatchRenderer": {
+?>
+<?php /** @var $block \Magento\Swatches\Block\Product\Renderer\Configurable */ ?>
+<div class="swatch-opt" data-role="swatch-options"></div>
+<script type="text/x-magento-init">
+    {
+        "[data-role=swatch-options]": {
+            "Magento_Swatches/js/swatch-renderer": {
+                "jsonConfig": <?php /* @escapeNotVerified */ echo $swatchOptions = $block->getJsonConfig(); ?>,
+                "jsonSwatchConfig": <?php /* @escapeNotVerified */
+                    echo $swatchOptions = $block->getJsonSwatchConfig(); ?>,
+                "mediaCallback": "<?php /* @escapeNotVerified */ echo $block->getMediaCallback() ?>",
+                "onlyMainImg": <?php /* @escapeNotVerified */ echo $block->getVar(
+                    'change_only_base_image',
+                    'Magento_Swatches'
+                ) ?: 'false'; ?>
+            }
+        } 
+    }
+</script>
+<?php $data = $block->getJsonConfig();
+
+$baseurl=$block->getUrl("preorder/configurableproduct");  ?>
+<script type="text/javascript">
+    require(['jquery'],function(jQuery){
+        jQuery(window).load(function() {
+           
+            var json = <?php echo $data ?>;
+            var option_data_select={};
+            var option_data_swatch={};
+            var output = {};
+            function jsonconcat(option_data_select,option_data_swatch){
+                output = jQuery.extend(option_data_select, option_data_swatch);
+
+                jQuery.each(json.index, function (key, data) {
+                    var product_id = JSON.stringify(output) === JSON.stringify(data);
+                    if(product_id){
+                      
+                        jQuery.ajax({
+                        type: "POST",
+                        url: "<?php echo $baseurl; ?>product",
+                        data: "product_id="+key,
+                        success: function(result){ 
+                        
+                          if(result.false!='false' && result.outofstock!='Out Of Stock'){
+                                obj=JSON.parse(result); 
+                                jQuery('#product-addtocart-button').text(obj.buttontxt);
+                                jQuery('.stock.available > span').text(obj.note);
+                            }
+                            else if(result.outofstock == 'Out Of Stock'){
+                                var txt = '<?php echo __('Add to Cart') ?>';
+                                jQuery('#product-addtocart-button').text(txt);
+                                jQuery('.stock.available > span').text(result);
+                            }
+                            else{
+                                var txt = '<?php echo __('Add to Cart') ?>';
+                                var note = '<?php echo __('In stock') ?>';
+                                jQuery('#product-addtocart-button').text(txt);
+                                jQuery('.stock.available > span').text(note);
+
+                            }
+                         } 
+                        });
+                    }       
+                });
+            }
+            jQuery(document).on('change', '.swatch-select', function(e) {
+
+                var value= jQuery(this).children(":selected").attr("option-id");
+    
+                var id=jQuery(this).parent().parent().attr('attribute-id');
+     
+                option_data_select[id]=value;
+   
+                jsonconcat(option_data_select,option_data_swatch);
+            });
+            jQuery(document).on('click', '.swatch-option', function(e){
+              
+                var value = jQuery(this).attr('option-id');
+                var id=jQuery(this).parent().parent().attr('attribute-id');
+              
+                option_data_swatch[id]=value;
+                jsonconcat(option_data_select,option_data_swatch);
+            });
+        });
+    });
+</script>

@@ -1,0 +1,14 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="styles"/>
+
+<head>
+    <title>Email</title>
+</head> 
+
+    <body>
+        <referenceContainer name="content">
+           <block class="Drc\PreOrder\Block\Adminhtml\Bid"  name="bids_bid_email"  
+                    template="Drc_PreOrder::email.phtml"  />
+        </referenceContainer>
+    </body>
+</page>

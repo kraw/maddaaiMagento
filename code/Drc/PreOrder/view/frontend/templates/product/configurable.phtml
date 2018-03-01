@@ -1,0 +1,91 @@
+<?php
+
+$_product    = $block->getProduct();
+
+$_attributes = $block->decorateArray($block->getAllowAttributes());
+?>
+<?php if ($_product->isSaleable() && count($_attributes)) :?>
+    <?php foreach ($_attributes as $_attribute) : ?>
+        <div class="field configurable required">
+            <label class="label" for="attribute<?php /* @escapeNotVerified */ echo $_attribute->getAttributeId() ?>">
+                <span><?php echo $block->escapeHtml($_attribute->getProductAttribute()->getStoreLabel()) ?></span>
+            </label>
+            <div class="control">
+                <select   name="super_attribute[<?php /* @escapeNotVerified */ echo $_attribute->getAttributeId() ?>]"
+                        data-selector="super_attribute[<?php /* @escapeNotVerified */ echo $_attribute->getAttributeId() ?>]"
+                        data-validate="{required:true}"
+                        id="attribute<?php /* @escapeNotVerified */ echo $_attribute->getAttributeId() ?>"
+                        class="super-attribute-select">
+                    <option value=""><?php /* @escapeNotVerified */ echo __('Choose an Option...') ?></option>
+                </select>
+            </div>
+        </div>
+    <?php endforeach; ?>
+    <script type="text/x-magento-init">
+        {
+            "#product_addtocart_form": {
+                "configurable": {
+                    "spConfig": <?php /* @escapeNotVerified */ echo $block->getJsonConfig() ?>,
+                    "onlyMainImg": <?php /* @escapeNotVerified */ echo $block->getVar('change_only_base_image', 'Magento_ConfigurableProduct') ?: 'false'; ?>
+                }
+            }
+        }
+
+    </script>
+    
+<?php endif;?>
+<?php
+    $data = $block->getJsonConfig();
+    $baseurl=$block->getUrl("preorder/configurableproduct");
+
+?>
+<script type="text/javascript">
+
+    require(['jquery'],function(jQuery){
+        jQuery(window).load(function() {
+            var json = <?php echo $data ?>;
+            jQuery(".super-attribute-select").on('change', function() {
+                var optionvalue=[];
+                var option_data={};
+                jQuery('.super-attribute-select').each(function(){
+                    var value=jQuery(this).val();
+                    var id=jQuery(this).attr('id');
+                    var id_index = id.split("attribute").pop(); 
+                    option_data[id_index]=value;
+                });
+                jQuery.each(json.index, function (key, data) {
+                    var product_id = JSON.stringify(option_data) === JSON.stringify(data);
+                    if(product_id){
+                        
+                        jQuery.ajax({
+                        type: "POST",
+                        url: "<?php echo $baseurl; ?>product",
+                        data: "product_id="+key,
+                        success: function(result){ 
+                            
+                           if(result.false!='false' && result.outofstock!='Out Of Stock'){
+                                obj=JSON.parse(result); 
+                                jQuery('#product-addtocart-button').text(obj.buttontxt);
+                                jQuery('.stock.available > span').text(obj.note);
+                            }
+                            else if(result.outofstock == 'Out Of Stock'){
+                                var txt = '<?php echo __('Add to Cart') ?>';
+                                jQuery('#product-addtocart-button').text(txt);
+                                jQuery('.stock.available > span').text(result);
+                            }
+                            else{
+                                var txt = '<?php echo __('Add to Cart') ?>';
+                                var note = '<?php echo __('In stock') ?>';
+                                jQuery('#product-addtocart-button').text(txt);
+                                jQuery('.stock.available > span').text(note);
+
+                            }
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    });
+    
+</script>

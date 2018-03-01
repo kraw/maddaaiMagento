@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+<menu>
+    <add id="Drc_PreOrder::menu"
+         title="GDA"
+         module="Drc_PreOrder"
+         sortOrder="20"
+         resource="Drc_PreOrder::menu"/>   
+    <add id="Drc_PreOrder::menu_prodotti"
+         title="Prodotti"
+         module="Drc_PreOrder"
+         sortOrder="20"
+         parent="Drc_PreOrder::menu"
+         action="bids/bid/index"
+         resource="Drc_PreOrde::menu_prodotti"/>
+    <add id="Drc_PreOrder::menu_conclusi"
+         title="GDA Conclusi"
+         module="Drc_PreOrder"
+         sortOrder="20"
+         parent="Drc_PreOrder::menu"
+         action="bids/bid/conclusi"
+         resource="Drc_PreOrde::menu_prodotti"/>
+    <add id="Drc_PreOrder::menu_totale"
+         title="Totale"
+         module="Drc_PreOrder"
+         sortOrder="20"
+         parent="Drc_PreOrder::menu"
+         action="preorder_bids/bid/index"
+         resource="Drc_PreOrde::menu_totale"/>
+    <add id="Drc_PreOrder::menu_valutation_products"
+         title="Valutation Products"
+         module="Drc_PreOrder"
+         sortOrder="20"
+         parent="Drc_PreOrder::menu"
+         action="valutation/valutationproduct/index"
+         resource="Drc_PreOrde::menu_totale"/>
+    <add id="Drc_PreOrder::menu_impostazioni"
+         title="Impostazioni"
+         module="Drc_PreOrder"
+         sortOrder="20"
+         parent="Drc_PreOrder::menu"
+         action="adminhtml/system_config/edit/section/menu"
+         resource="Drc_PreOrde::menu_totale"/>
+
+</menu>
+</config>

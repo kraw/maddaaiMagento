@@ -1,0 +1,88 @@
+<?php
+
+$customer_id = intval($block->getCustomerId());
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$StockState = $objectManager->get('\Magento\CatalogInventory\Api\StockStateInterface');
+
+$imageHelperFactory = $objectManager->create("\Magento\Catalog\Helper\ImageFactory");
+
+$store = $objectManager->get('Magento\Store\Model\StoreManagerInterface')->getStore();
+$base_url = $objectManager->get('Magento\Store\Model\StoreManagerInterface')
+            ->getStore(1)
+            ->getBaseUrl();
+
+
+$GDArepo = $objectManager->get('\Drc\PreOrder\Model\PreorderPending');
+$productFactory = $objectManager->get('\Magento\Catalog\Model\ProductFactory');
+
+$prodotti = array();
+$gda = $GDArepo->getProductsByIdCustomer($customer_id);
+
+foreach($gda as $prodotto){
+	$prodotti[$prodotto['id_prodotto']] = $prodotto; 	
+}
+
+
+?>
+<div class="block-content">
+          <div class="table-wrapper orders-recent">
+            <table class="data table table-order-items recent" id="my-orders-table">
+                <caption class="table-caption">Ordini recenti</caption>
+                <tbody>
+
+<?php
+if(count($prodotti)>0){
+	foreach($prodotti as $prod){
+		
+		
+				$prodotto = $productFactory->create()->load($prod['id_prodotto']); //oggetto prodotto
+				$nome_prodotto = $prodotto->getName();
+     			$prezzo =  $prodotto->getPrice();
+      		    $imageUrl = $store->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . 'catalog/product' . $prodotto->getImage();
+				
+				$bid_prodotto = $prodotto->getResource()->getAttribute("bid_target")->getFrontend()->getValue($prodotto); //bid
+        		$bid_start_date = $prodotto->getResource()->getAttribute("bid_start_date")->getFrontend()->getValue($prodotto);
+        		$bid_end_date = $prodotto->getResource()->getAttribute("bid_end_date")->getFrontend()->getValue($prodotto);
+				
+				$date = new DateTime($bid_start_date);
+				$bid_start_date = $date->format('d-m-Y');
+				
+				$date = new DateTime($bid_end_date);
+				$bid_end_date = $date->format('d-m-Y');
+				
+     		    $soglia = $StockState->getStockQty($prodotto->getId(), $prodotto->getStore()->getWebsiteId());
+
+				$raggiunto = $bid_prodotto == $soglia ? 1:0;
+		
+				$url = $prodotto->getProductUrl();
+		
+		
+		
+		?>			
+			       <tr>
+					   <td><img class="admin__control-thumbnail" data-bind="" src="<?= $imageUrl ?>" alt="" style="width:15%; float:left">
+			    		<span style="margin-left:10px"><strong><?= $nome_prodotto; ?> </strong><br></span>
+						<span style="margin-left:10px">Data Inizio: <strong><?= $bid_start_date ; ?></strong><br></span>
+						<span style="margin-left:10px">Data Fine: <strong><?= $bid_end_date ; ?></strong><br></span>
+						<span style="margin-left:10px"><strong><?= round($prezzo,2) ; ?>&nbsp;€ </strong><br></span>
+						<span style="margin-left:10px; <?php echo $raggiunto == 1 ? 'color:green' : 'color:red' ?>"><strong><?= $raggiunto == 1 ? "GDA RAGGIUNTO" : "GDA NON RAGGIUNTO" ?></strong><br></span>
+						   <span style="margin-left:10px;"><a href="<?= $url ?>">Visualizza</a></span>
+</td>
+					</tr>
+		<?php
+	}
+}else{
+	?>
+					<tr><td>Non hai aderito a nessun GDA.</td></tr>				
+	<?php
+}
+
+
+
+?>
+
+                </tbody>
+            </table>
+        </div>
+        </div>

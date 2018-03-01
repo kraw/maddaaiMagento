@@ -1,0 +1,187 @@
+<?php
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+use Magento\Framework\App\Action\Action;
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+
+/**
+ * Product list template
+ *
+ * @var $block \Magento\Catalog\Block\Product\ListProduct
+ */
+?>
+<?php
+
+
+
+$_productCollection = $block->getProductCollection()->addFilter('type_id', 'simple');
+$_helper = $this->helper('Magento\Catalog\Helper\Output');
+$active = $this->helper('Drc\PreOrder\Helper\Check')->checkEnable();
+?>
+<?php if (!$_productCollection->getSize()): ?>
+    <div class="message info empty"><div><?php /* @escapeNotVerified */ echo __('We can\'t find products matching the selection.') ?></div></div>
+<?php else: ?>
+    <?php echo $block->getToolbarHtml() ?>
+    <?php echo $block->getAdditionalHtml() ?>
+    <?php
+    if ($block->getMode() == 'grid') {
+        $viewMode = 'grid';
+        $image = 'category_page_grid';
+        $showDescription = false;
+        $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::FULL_VIEW;
+    } else {
+        $viewMode = 'list';
+        $image = 'category_page_list';
+        $showDescription = false;
+        $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::FULL_VIEW;
+    }
+    /**
+     * Position for actions regarding image size changing in vde if needed
+     */
+    $pos = $block->getPositioned();
+    ?>
+    <div class="block widget block-products-list grid">
+        <div class="block-content">
+    <div class="products wrapper grid products-grid">
+        <?php $iterator = 1; ?>
+        <ol class="products list items product-items">
+            <?php /** @var $_product \Magento\Catalog\Model\Product */ ?>
+            <?php foreach ($_productCollection as $_product):  /* @escapeNotVerified */
+            $bid_end_date = $_product->getData('bid_end_date');
+            $today = date("Y-m-d");
+            $range_date = new DateTime($bid_end_date);
+            $range_date->modify('-5 day');
+            if($today >= $range_date->format('Y-m-d')  &&  $today <= $bid_end_date ):
+            echo($iterator++ == 1) ? '<li class="item product product-item">' : '</li><li class="item product product-item">' ?>
+                <div class="product-item-info" data-container="product-grid">
+                    <?php
+                    $id = $_product->getEntityId();
+                    $type=$_product->getTypeID();
+                    $buttonText = $block->getPreorderButtonText();
+                    $text='';
+                    $productImage = $block->getImage($_product, $image);
+
+                    if ($pos != null) {
+                        $position = ' style="left:' . $productImage->getWidth() . 'px;'
+                            . 'top:' . $productImage->getHeight() . 'px;"';
+                    }
+                    ?>
+                    <?php // Product Timer ?>
+                    <?php if (($active==1)) { ?>
+                        <div class="product-item-link center-text" id="bid-time" style="text-align: center;"
+                             href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>">
+                            <div class="swatch-option color" style="background-color: #eb6703;color: #FFFFFF;max-width: 100%;text-align: center;float: inherit;">
+                                Scade tra: <strong id="bid-timer-<?=$_product->getSku()?>"
+                                                   data-bidend="<?=$_product->getData('bid_end_date')?>"></strong>
+                            </div>
+                        </div>
+
+                    <?php } ?>
+
+                    <?php // Product Image ?>
+                    <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
+                        <?php echo $productImage->toHtml(); ?>
+                    </a>
+                    <div class="product details product-item-details">
+                        <?php
+                        $_productNameStripped = $block->stripTags($_product->getName(), null, true);
+                        ?>
+                        <strong class="product name product-item-name">
+                            <!-- Order Progress Bar -->
+
+                            <?php if (($active==1) && (int)$_product->getData('bid_target') >= 0 ) {
+                                $ordini = $_product->getData('bid_target');
+                                $quantita =  $block->getQty($id);
+                                ?>
+                                <div class="stock available">
+
+                                    <div style="text-align: center">
+                                        <strong><?=$ordini?> / <?=$quantita?></strong> adesioni raggiunte
+                                        <progress value="<?=$ordini?>" max="<?=$quantita?>" style="width: 100%"></progress></div>
+                                </div><br>
+                            <?php } ?>
+
+
+                            <a class="product-item-link"
+                               href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>">
+                                <?php /* @escapeNotVerified */echo $_helper->productAttribute($_product, $_product->getName(), 'name'); ?>
+                            </a>
+                        </strong>
+                        <?php  echo $block->getReviewsSummaryHtml($_product, $templateType); ?>
+                        <?php /* @escapeNotVerified */ echo $block->getProductPrice($_product); ?>
+                        <?php echo __($text); ?>
+                        <?php echo $block->getProductDetailsHtml($_product); ?>
+
+                        <div class="product-item-inner">
+                            <div class="product actions product-item-actions"<?php echo strpos($pos, $viewMode . '-actions') ? $position : ''; ?>>
+                                <div class="actions-primary"<?php echo strpos($pos, $viewMode . '-primary') ? $position : ''; ?>>
+
+
+                                        <a href="<?= $_product->getProductUrl() ?>">
+                                            <button type="button" style="width: 100%!important;"
+                                                    title="<?php echo $block->escapeHtml(__($buttonText)); ?>"
+                                                    class="action tocart primary">
+                                                <span><?php echo __($buttonText); ?></span>
+                                            </button>
+                                        </a>
+
+                                </div>
+                                <div data-role="add-to-links" class="actions-secondary"<?php echo strpos($pos, $viewMode . '-secondary') ? $position : ''; ?>>
+                                    <?php if ($addToBlock = $block->getChildBlock('addto')): ?>
+                                        <?php echo $addToBlock->setProduct($_product)->getChildHtml(); ?>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php echo($iterator == count($_productCollection)+1) ? '</li>' : '' ?>
+            <?php endif; ?>
+            <?php endforeach; ?>
+        </ol>
+    </div></div></div>
+    <?php echo $block->getToolbarHtml() ?>
+<?php endif; ?>
+<script type="text/javascript">
+
+
+    require(['jquery'], function($){
+        $( document ).ready(function() {
+            function bidCountdown() {
+                $('#bid-time [id^="bid-timer-"]').each(function () {
+                    var id = this.id;
+                   var val = $(this).data("bidend").split(" ");
+                    var end = new Date(val[0]);
+                    var second = 1000;
+                    var minute = second * 60;
+                    var hour = minute * 60;
+                    var day = hour * 24;
+                    var now = new Date();
+                    var remain = end - now;
+                    if (remain < 0) {
+                        clearInterval(timer);
+                        // Qua deve scattare il trigger di fine bid
+                        document.getElementById(id).innerHTML = 'Concluso!';
+                        return;
+                    }
+                    var days = Math.floor(remain / day);
+                    var hours = Math.floor((remain % day) / hour);
+                    var minutes = Math.floor((remain % hour) / minute);
+                    var seconds = Math.floor((remain % minute) / second);
+
+                    document.getElementById(id).innerHTML =
+                        days + ' G ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
+                });
+            }
+            setInterval(bidCountdown, 1000); // update every second
+        });
+
+    });
+</script>
+

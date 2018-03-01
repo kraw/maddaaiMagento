@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="drc_preorder_setting_preorderemail_preordertemplate" label="Pre-Order Alert" file="preorder_alert.html" type="html" module="Drc_PreOrder" area="frontend"/>
+    <template id="drc_preorder_setting_preorderorderemail_preordertemplate" label="New Order With Pre-Order" file="order_new.html" type="html" module="Drc_PreOrder" area="frontend"/> 
+     <template id="drc_preorder_setting_preorderinvoiceemail_preordertemplate" label="New Invoice with Pre-Order" file="invoice_new.html" type="html" module="Drc_PreOrder" area="frontend"/>
+</config>

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Customer\Model\Registration">
+        <plugin name="Syrus_DisableRegistration::after" type="Syrus\Disableaccess\Plugin\RegistrationPlugin"/>
+    </type>
+    <type name="Magento\Customer\Controller\Account\LogoutSuccess">
+        <plugin name="Syrus_RedirectLogout::after" type="Syrus\Disableaccess\Plugin\RedirectPlugin"/>
+    </type>
+
+</config>

@@ -1,0 +1,97 @@
+<?php
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php /** @var  $block \Magento\Sales\Block\Order\View*/?>
+
+<?php $_history = $block->getOrder()->getVisibleStatusHistory() ?>
+<?php
+$flag=false;
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+$product=$objectManager->create('Magento\Catalog\Api\ProductRepositoryInterface');
+$stockInventory=$objectManager->create('Magento\CatalogInventory\Model\Stock\StockItemRepository');
+$order= $block->getOrder();
+$orderData=$objectManager->create('Magento\Sales\Model\Order')->load($order->getId());
+$items = $orderData->getAllVisibleItems();
+        foreach($items as $i){
+         
+            $type=$i->getData('product_type');
+           
+            if ($type=='configurable') {
+                $sku=$i->getData('sku');
+                $selectProduct=$product->get($sku);
+                $id=$selectProduct->getId();
+                
+            }
+            elseif ($type=='bundle') {
+               
+               $collection = $i->getProduct()->getTypeInstance(true)
+                    ->getSelectionsCollection($i->getProduct()->getTypeInstance(true)
+                    ->getOptionsIds($i->getProduct()), $i->getProduct());
+                    $sku=$i->getData('sku');
+                    
+                    foreach($collection as $item) {
+                        
+                        
+                        $childSku=$item->getSku();
+                        $pos = strpos($sku, $childSku);
+                        if ($pos) {
+                            
+                            $id=$item->getId();
+                            $obj=$stockInventory->get($id);
+                            $backorderStatus=$obj->getData('backorders');
+                            $stockStatus=$obj->getIsInStock();
+                            if (($backorderStatus=='3' && $stockStatus=='1')) {
+                                $id=$item->getId();
+                                break;
+                                
+                            }
+                            
+
+                        }
+                    }
+            }
+            else{
+                $id=$i->getProductId();
+                
+
+            }
+            $obj=$stockInventory->get($id);
+            $backorderStatus=$obj->getData('backorders');
+            $stockStatus=$obj->getIsInStock();
+            if (($backorderStatus=='3' && $stockStatus=='1') || ($backorderStatus=='4' && $stockStatus==NULL ) ) {
+                $flag=true;
+                break;
+            } 
+            else{
+                $flag=false;
+                
+            }
+        }
+        if ($flag) {
+            $scopeConfig=$objectManager->create('Magento\Framework\App\Config\ScopeConfigInterface');
+            $preorderWarning=$scopeConfig->getValue('drc_preorder_setting/display/preorder_warning', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+            echo '<span>'.$preorderWarning.'<br><br><br></span>';
+        }
+        
+        ?>
+<?php if (count($_history)): ?>
+    <div class="block block-order-details-comments">
+        <div class="block-title"><strong><?php /* @escapeNotVerified */ echo __('About Your Order') ?></strong></div>
+        <div class="block-content">
+            <dl class="order-comments">
+                <?php foreach ($_history as $_historyItem): ?>
+                    <dt class="comment-date"><?php /* @escapeNotVerified */ echo $block->formatDate($_historyItem->getCreatedAt(), \IntlDateFormatter::MEDIUM, true) ?></dt>
+                    <dd class="comment-content"><?php echo $block->escapeHtml($_historyItem->getComment()) ?></dd>
+                <?php endforeach; ?>
+            </dl>
+
+        </div>
+    </div>
+<?php endif; ?>

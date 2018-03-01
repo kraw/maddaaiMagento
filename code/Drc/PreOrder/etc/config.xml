@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <drc_preorder_setting>
+            <general>
+                <active>1</active>
+            </general>
+            <display>
+                <button_text>PRE-ORDER</button_text>
+                <preorder_note>Il prodotto sara disponibile appena il quorum sarà raggiunto!</preorder_note>
+                <preorder_warning>Il tuo ordina sarà spedito non appena il prodotto sarà disponibile.</preorder_warning>
+            </display>
+            <preorderemail>
+                <active>0</active>
+            </preorderemail>
+            <preorderorderemail>
+                <active>0</active>
+            </preorderorderemail>
+            <preorderinvoiceemail>
+                <active>0</active>
+            </preorderinvoiceemail>
+        </drc_preorder_setting>
+    </default>
+</config>

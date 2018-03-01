@@ -1,0 +1,7 @@
+<?php $i = 0; ?>
+<?php foreach($block->getSubcategories($block->getData("category")) as $category) : ?>
+	<?php if($i % 3 == 0) echo "<p>"; ?>
+	<span><a href="<?php echo $category->getUrl(); ?>"><?php echo $category->getName(); ?></a></span>
+	<?php if($i % 3 == 2 || $i == $block->getSubcategories($block->getData("category"))->count()) echo "</p>"; ?>
+	<?php $i++; ?>
+<?php endforeach; ?>

@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    
+    <body>
+        
+        <referenceContainer name="content">
+            
+                    <referenceContainer name="product.info.form.content" as="product_info_form_content">
+                        <block class="Drc\PreOrder\Block\AddToCart" name="product.info.addtocart.preorder" as="addtocart.preorder" template="Drc_PreOrder::product/addtocart.phtml" cacheable="false" >
+                            
+                        </block>
+                        <referenceBlock name="product.info.addtocart" remove="true" />
+                    </referenceContainer>
+                   
+                         <referenceBlock  name="product.info.options.wrapper.bottom" >
+                             <referenceBlock  name="product.info.options.wrapper.bottom" >
+                        	
+                                 <block class="Drc\PreOrder\Block\AddToCart" name="product.info.addtocart.additional.preorder" as="product.info.addtocart.preorder" template="Drc_PreOrder::product/addtocart.phtml" >
+                                   
+                                 </block>
+                                 <referenceBlock name="product.info.addtocart.additional" remove="true" />
+                        </referenceBlock>
+                       </referenceBlock> 
+                    
+        </referenceContainer>
+        
+        
+    </body>
+</page>

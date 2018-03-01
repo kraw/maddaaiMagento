@@ -1,0 +1,12 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left"
+    xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+    <body>
+           <referenceBlock name="customer_form">
+             <block class="Drc\PreOrder\Block\Adminhtml\Edit\Tab\Gda" name="customer_edit_tab_gda">
+              <action method="setTabLabel">
+                  <argument name="label" xsi:type="string">GDA</argument>
+              </action>
+            </block>
+          </referenceBlock>
+    </body>
+</page>
