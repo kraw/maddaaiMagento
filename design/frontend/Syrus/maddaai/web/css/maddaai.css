@@ -1,0 +1,25 @@
+.page-header{
+ background: url("http://magento2-demo.nexcess.net/pub/media/wysiwyg/home/home-main.jpg") no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+ margin-top: -40px;
+}
+
+.header.content{
+    height: 200px;
+}
+
+/*
+.page-header {
+    padding-bottom: 9px!important;
+}
+*/
+
+.minicart-wrapper .action.showcart.active {
+    color: #FFFFFF!important;
+}
+.product-social-links{
+	display:none; 
+}
