@@ -1,4 +1,4 @@
-<h1>Syrus Magento Bid Module </h1>
+<h1>Syrus Magento Maddaai </h1>
 <h2>Funzioni modulo </h2>
 <ul><li>Modifica del bottone “Add to cart” a “Pre-Order”</li>
 <li>Gestione del pre-order: avviso ai consumatori quando il prodotto è disponibile </li>
