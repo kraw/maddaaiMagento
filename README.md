@@ -53,12 +53,12 @@
 
 <h3>Aggiornamenti Magneto</h3>
 <p>Per aggiornare la versione di Magento eseguire la seguente sequenza di commandi</p>
-<code>composer require magento/product-community-edition 2.0.2 --no-update</code>
-<code>composer update</code>
-<code>rm -rf var/di var/generation</code>
-<code>php bin/magento cache:clean</code>
-<code>php bin/magento cache:flush</code>
-<code>php bin/magento setup:upgrade</code>
-<code>php bin/magento setup:di:compile</code>
+<code>composer require magento/product-community-edition 2.0.2 --no-update</code><br />
+<code>composer update</code><br />
+<code>rm -rf var/di var/generation</code><br />
+<code>php bin/magento cache:clean</code><br />
+<code>php bin/magento cache:flush</code><br />
+<code>php bin/magento setup:upgrade</code><br />
+<code>php bin/magento setup:di:compile</code><br />
 <code>php bin/magento indexer:reindex</code>
 
