@@ -52,6 +52,7 @@
 <code>rm -rf var/generation var/cache</code> #cancella i file generati da magento<br />
 <code>chmod -R 777 var/* </code>#imposta i permessi coretti per la cartella var<br />
 <code>chmod -R 777 pub/* </code>#imposta i permessi coretti per la cartella pub<br />
+<code>php bin/magento indexer:reindex </code>
 
 <h3>Aggiornamenti Magneto</h3>
 <p>Per aggiornare la versione di Magento eseguire la seguente sequenza di commandi</p>
