@@ -1,6 +1,7 @@
 <?php
 
 namespace Syrus\Navigation\Plugin;
+use  Magento\Framework\App\ObjectManager;
 
 class Topmenu
 {
@@ -8,7 +9,7 @@ class Topmenu
 
     public function getCategoryCollection($isActive = true, $level = false, $sortBy = false, $pageSize = false)
     {
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $objectManager = ObjectManager::getInstance();
         $collection = $objectManager->create('\Magento\Catalog\Model\ResourceModel\Category\CollectionFactory')->create();
         $collection->addAttributeToSelect('*');
 
