@@ -28,6 +28,10 @@ class Resetpassword implements ResetpasswordInterface
 	$customer_data->loadByEmail($email);
 	$customer_id = $customer_data->getId();
 	if($customer_id) {
+	    /**
+         * @TODO: Da riscrivere utilizzando i model
+	     * @Deprecated Must be used only in development environment
+	     */
 		$sql = "UPDATE $tableName SET `password_hash` = CONCAT(SHA2('d6c5289983598574b309c27618d57687".$password."', 256), ':d6c5289983598574b309c27618d57687:1')  WHERE `entity_id` = $customer_id";
 		$ret = $connection->query($sql);
 		return json_encode(1);

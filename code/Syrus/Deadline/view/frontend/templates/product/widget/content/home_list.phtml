@@ -159,9 +159,9 @@ $active = $this->helper('Drc\PreOrder\Helper\Check')->checkEnable();
             <div class="products wrapper grid products-grid">
                 <?php $iterator = 1; ?>
                 <ol class="products list items product-items">
-                    <?php /** @var $_product \Magento\Catalog\Model\Product */ ?>
+                    <?php /** @var $_product \Magento\Catalog\Model\Product */?>
                     <?php foreach ($_productCollection as $_product):  /* @escapeNotVerified */
-						$bid_end_date = $_product->getData('bid_end_date');
+                        $bid_end_date = $_product->getData('bid_end_date');
 						$today = date("Y-m-d");
             			$range_date = new DateTime($bid_end_date);
             			$range_date->modify('-5 day');
