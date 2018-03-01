@@ -40,6 +40,8 @@
 <li>Per capire come ragiona il plugin guardare qua: http://docs.magentoatdrc.com/preorder/ </li>
 </ul>
 
+<h3>Attivazione cache:</h3>
+<code>php -f bin/magento cache:enable</code>
 <h3>Commandi utili:</h3>
 <code>php bin/magento cache:clean </code> #pulisce la cache di magento<br />
 <code>php bin/magento setup:static-content:deploy </code>#compila il modulo<br />
