@@ -40,6 +40,8 @@
 <li>Per capire come ragiona il plugin guardare qua: http://docs.magentoatdrc.com/preorder/ </li>
 </ul>
 
+<h3>Attivazione cache:</h3>
+<code>php -f bin/magento cache:enable</code>
 <h3>Commandi utili:</h3>
 <code>php bin/magento cache:clean </code> #pulisce la cache di magento<br />
 <code>php bin/magento setup:static-content:deploy </code>#compila il modulo<br />
@@ -50,10 +52,11 @@
 <code>rm -rf var/generation var/cache</code> #cancella i file generati da magento<br />
 <code>chmod -R 777 var/* </code>#imposta i permessi coretti per la cartella var<br />
 <code>chmod -R 777 pub/* </code>#imposta i permessi coretti per la cartella pub<br />
+<code>php bin/magento indexer:reindex </code>
 
 <h3>Aggiornamenti Magneto</h3>
 <p>Per aggiornare la versione di Magento eseguire la seguente sequenza di commandi</p>
-<code>composer require magento/product-community-edition 2.0.2 --no-update</code><br />
+<code>composer require magento/product-community-edition 2.1.12 --no-update</code><br />
 <code>composer update</code><br />
 <code>rm -rf var/di var/generation</code><br />
 <code>php bin/magento cache:clean</code><br />
