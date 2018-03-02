@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+<widget class="Syrus\CategoryWidget\Block\Widget\CategoryWidget" id="syrus_categorywidget">
+	<label>Elenco Categorie</label>
+	<description>Mostra elenco categorie sulla pagina</description>
+	<parameters>
+		<parameter name="image" xsi:type="select" required="true" visible="true">
+			<label translate="true">Utilizzare immagini</label>
+			<options>
+				<option name="default" value="no-image" selected="true">
+					<label translate="true">No</label>
+				</option>
+				<option name="image" value="image">
+					<label translate="true">Si</label>
+				</option>
+			</options>
+		</parameter>
+		<parameter name="imagewidth" xsi:type="text"  visible="true" sort_order="2">
+			<label translate="true">Larghezza dell'immagine</label>
+			<description translate="true">Inserisci larghezza immagine Es. 250, non suffisso con px</description>
+			<value>250</value>
+		</parameter>
+		<parameter name="imageheight" xsi:type="text"  visible="true" sort_order="3">
+			<label translate="true">Altezza dell'immagine</label>
+			<description translate="true">Inserisci altezza immagine Es. 250, non suffisso con px</description>
+			<value>250</value>
+		</parameter>
+		<parameter name="parentcat" xsi:type="text"  visible="true" sort_order="10">
+			<label translate="true">Id categoria genitore specifico</label>
+			<description translate="true">La Categoria predefinita di Archivio corrente verrà utilizzata in caso di Vuoto</description>
+		</parameter>
+	</parameters>
+</widget>
+</widgets>

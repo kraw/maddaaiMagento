@@ -8,6 +8,9 @@ $StockState = $objectManager->get('\Magento\CatalogInventory\Api\StockStateInter
 
 $imageHelperFactory = $objectManager->create("\Magento\Catalog\Helper\ImageFactory");
 
+/**
+ * @TODO Da cambiare costante cablata
+ */
 $store = $objectManager->get('Magento\Store\Model\StoreManagerInterface')->getStore();
 $base_url = $objectManager->get('Magento\Store\Model\StoreManagerInterface')
             ->getStore(1)

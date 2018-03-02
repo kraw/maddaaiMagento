@@ -35,6 +35,7 @@ class ListProduct extends \Magento\Catalog\Block\Product\ListProduct
     public function getStockItem($productId)
     {
         return $this->_stockItemRepository->get($productId);
+        //return $this->_stockItemRepository->get(11);
     }
     public function getPreorderButtonText()
     {

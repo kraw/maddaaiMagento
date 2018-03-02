@@ -8,7 +8,13 @@ $StockState = $objectManager->get('\Magento\CatalogInventory\Api\StockStateInter
 
 
 $imageHelperFactory = $objectManager->create("\Magento\Catalog\Helper\ImageFactory");
-
+/**
+ * @TODO Da cambiare costante cablata
+ */
+$store = $objectManager->get('Magento\Store\Model\StoreManagerInterface')->getStore();
+$base_url = $objectManager->get('Magento\Store\Model\StoreManagerInterface')
+    ->getStore(1)
+    ->getBaseUrl();
 
 ?>
 
@@ -19,9 +25,24 @@ $imageHelperFactory = $objectManager->create("\Magento\Catalog\Helper\ImageFacto
 }	
 </style>
 
+
 <div id="email_alert" style="display:none"><div class="messages"><div class="message message-success success"><div data-ui-id="messages-message-success">Email inviate correttamente.</div></div></div></div>
 
 
+<div class="page-main-actions">
+    <div class="page-actions-placeholder"></div>
+    <div class="page-actions" data-ui-id="page-actions-toolbar-content-header">
+        <div class="page-actions-inner" data-title="Catalogo">
+            <div class="page-actions-buttons">
+                <div title="Aggiungi prodotto">
+                    <button  title="Aggiungi prodotto" class="action-default primary add">
+                        <span>Aggiungi prodotto</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="admin__data-grid-wrap" data-role="grid-wrapper">
     <table class="data-grid data-grid-draggable" data-role="grid">
@@ -56,10 +77,7 @@ $imageHelperFactory = $objectManager->create("\Magento\Catalog\Helper\ImageFacto
 
 	<?php
 
-$store = $objectManager->get('Magento\Store\Model\StoreManagerInterface')->getStore();
-$base_url = $objectManager->get('Magento\Store\Model\StoreManagerInterface')
-            ->getStore(1)
-            ->getBaseUrl();
+
 
 foreach ($prodotti as $product){
                                                                                                                                        
