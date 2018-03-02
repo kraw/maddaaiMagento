@@ -35,7 +35,8 @@ class AddToCart extends \Magento\Catalog\Block\Product\View
     }
     public function getStockItem($productId)
     {
-        return $this->_stockItemRepository->get($productId);
+        return $this->_stockItemRepository->get(11);
+       // return $this->_stockItemRepository->get($productId);
     }
     public function getPreorderButtonText()
     {
