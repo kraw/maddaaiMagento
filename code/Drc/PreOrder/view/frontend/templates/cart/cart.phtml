@@ -15,7 +15,7 @@ $isVisibleProduct = $product->isVisibleInSiteVisibility();
 /** @var \Magento\Msrp\Helper\Data $helper */
 $helper = $this->helper('Magento\Msrp\Helper\Data');
 $canApplyMsrp = $helper->isShowBeforeOrderConfirm($product) && $helper->isMinimalPriceLessMsrp($product);
-$type = $product->getTypeId();
+$type=$product->getTypeId();
 $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
 $scopeConfig=$objectManager->create('Magento\Framework\App\Config\ScopeConfigInterface');
 $defaultNote=$scopeConfig->getValue('drc_preorder_setting/display/preorder_note', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);

@@ -171,8 +171,8 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
 		  //end mod credit limit
 
 
-
-        $product_stock = $this->_stockItemRepository->get($id_product);
+          //TODO da rifare
+        $product_stock = $this->_stockItemRepository->get(11);
         $stock = $product_stock->getQty(); //quantità in stock
 
 
@@ -180,13 +180,13 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
         $bid_start_date = $prodotto->getResource()->getAttribute("bid_start_date")->getFrontend()->getValue($prodotto);
         $bid_end_date = $prodotto->getResource()->getAttribute("bid_end_date")->getFrontend()->getValue($prodotto);
 
-        Zend_Debug::dump("Bid prodotto = ".$bid_prodotto);
-        Zend_Debug::dump("Quantità carrello =".$qty);
-        Zend_Debug::dump("Stock = ".$stock);
+       // Zend_Debug::dump("Bid prodotto = ".$bid_prodotto);
+       // Zend_Debug::dump("Quantità carrello =".$qty);
+        //Zend_Debug::dump("Stock = ".$stock);
 
         //update bid
         if( ($bid_prodotto + $qty) <= $stock){
-          Zend_Debug::dump("#bid < #stock");
+          //Zend_Debug::dump("#bid < #stock");
           $prodotto->setData('bid_target', $bid_prodotto + $qty);
           $prodotto->save();
         //  Zend_Debug::dump($prodotto);
@@ -202,7 +202,7 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
           $bid_prodotto = $prodotto->getResource()->getAttribute("bid_target")->getFrontend()->getValue($prodotto); //bid updated
         }else{
 	  //annullo aggiunta dei bid
-          Zend_Debug::dump("#bid > #stock");
+        //  Zend_Debug::dump("#bid > #stock");
 			$urlBuilder = $this->_context->getUrlBuilder();
 			$event = $observer->getEvent();
 			$CustomRedirectionUrl = $urlBuilder->getUrl('preorder/confirmcheckout/annull');
@@ -227,7 +227,7 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
       if(count($bid_raggiunti) > 0){
         foreach ($bid_raggiunti as $id) {
 
-          Zend_Debug::dump("Bid raggiunto per il prodotto = ".$id);
+//          Zend_Debug::dump("Bid raggiunto per il prodotto = ".$id);
 
           $preorder_raggiunti = $this->_preModel->getAllCustomerByIdProduct($id);
 

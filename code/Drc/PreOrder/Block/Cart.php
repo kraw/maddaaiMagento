@@ -32,7 +32,7 @@ class Cart extends \Magento\Checkout\Block\Cart\Item\Renderer
    
     public function getStockItem($productId)
     {
-        return $this->_stockItemRepository->get($productId);
+        return $this->_stockItemRepository->get(11);
     }
     public function getPreorderNote()
     {
