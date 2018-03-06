@@ -38,4 +38,5 @@ class Cart extends \Magento\Checkout\Block\Cart\Item\Renderer
     {
         return $this->scopeConfig->getValue('drc_preorder_setting/display/preorder_note', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
+
 }

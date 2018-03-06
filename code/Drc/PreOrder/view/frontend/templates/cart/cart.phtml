@@ -2,7 +2,7 @@
 /**
  * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
- */ 
+ */
 
 // @codingStandardsIgnoreFile
 
@@ -11,12 +11,11 @@
 $_item = $block->getItem();
 $product = $_item->getProduct();
 
-//print_r($product->getData());
 $isVisibleProduct = $product->isVisibleInSiteVisibility();
 /** @var \Magento\Msrp\Helper\Data $helper */
 $helper = $this->helper('Magento\Msrp\Helper\Data');
 $canApplyMsrp = $helper->isShowBeforeOrderConfirm($product) && $helper->isMinimalPriceLessMsrp($product);
-$type=$product->getTypeId();
+$type = $product->getTypeId();
 $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
 $scopeConfig=$objectManager->create('Magento\Framework\App\Config\ScopeConfigInterface');
 $defaultNote=$scopeConfig->getValue('drc_preorder_setting/display/preorder_note', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
@@ -48,13 +47,13 @@ $defaultNote=$scopeConfig->getValue('drc_preorder_setting/display/preorder_note'
                         <?php echo $block->escapeHtml($block->getProductName()) ?>
                     <?php endif; ?>
                 </strong>
-                
+
                 <?php if ($_options = $block->getOptionList()):?>
 
                     <dl class="item-options">
                         <?php foreach ($_options as $_option) : ?>
                             <?php $_formatedOptionValue = $block->getFormatedOptionValue($_option) ?>
-                            
+
                             <dt><?php echo $block->escapeHtml($_option['label']) ?></dt>
                             <dd>
                                 <?php if (isset($_formatedOptionValue['full_view'])): ?>
@@ -71,11 +70,11 @@ $defaultNote=$scopeConfig->getValue('drc_preorder_setting/display/preorder_note'
                     </dl>
                 <?php endif;?>
 
-                 <div><?php 
-                    
-                    
+                 <div><?php
+
+
 if ($type !='bundle') {
-  
+
 
                     if ($type=='configurable') {
                       $sku=$product->getSku();
@@ -88,14 +87,14 @@ if ($type !='bundle') {
                     }
 
                     else {
- 
+
                         $id=$product->getId();
                         $obj=$objectManager->create('Magento\CatalogInventory\Model\Stock\StockItemRepository')->get($id);
                         $backorderStatus=$obj->getData('backorders');
                         $note='';
                         $note = $objectManager->get('Magento\Catalog\Model\Product')->load($id)->getData('preorder note');
                     }
-                    
+
                     if(($backorderStatus=='3') ||($backorderStatus=='4') ){
                         if ($note != '') {
                             echo __($note);}
@@ -103,11 +102,11 @@ if ($type !='bundle') {
                             echo __($defaultNote);}
                         else {
                              echo __('available soon...!'); }
-                        
+
                     }
                     }
                     else{
-                        
+
                         $collection = $block->getItem()->getProduct()->getTypeInstance(true)
                     ->getSelectionsCollection($block->getItem()->getProduct()->getTypeInstance(true)
                 ->getOptionsIds($product), $product);
@@ -131,22 +130,22 @@ if ($type !='bundle') {
                                         echo __($defaultNote);}
                                     else {
                                          echo __('available soon...!'); }
-                                    
+
 
                     }
 
                        }
-                           
+
 
                     }
                     }
-                    
-                    
 
 
 
 
-                 
+
+
+
 
  ?></div>
 
@@ -160,7 +159,7 @@ if ($type !='bundle') {
                     <?php echo $addInfoBlock->setItem($_item)->toHtml() ?>
                 <?php endif;?>
             </div>
-             
+
         </td>
 
         <?php if ($canApplyMsrp): ?>

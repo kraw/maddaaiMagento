@@ -12,6 +12,13 @@ class AddToCart extends \Magento\Catalog\Block\Product\View
     protected $scopeConfig;
     protected $like;
 
+    private $_objectManager;
+
+    const ORDINI_RAGGIUNTI = " ORIDINI RAGIUNTI";
+    const ORDINI_RIMASTI = "MANCANO ANCORA ";
+    const ORDINI_MANCANTI = " ORDINI PER RAGGIUNGERE IL QUORUM";
+
+
     public function __construct(
         \Magento\CatalogInventory\Model\Stock\StockItemRepository $stockItemRepository,        
         \Magento\Catalog\Block\Product\Context $context,
@@ -27,6 +34,7 @@ class AddToCart extends \Magento\Catalog\Block\Product\View
 	    \Drc\PreOrder\Model\ResourceModel\Like $like,
         array $data = []
     ) {
+        $this->_objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $this->_stockItemRepository = $stockItemRepository;
 	    $this->like = $like;
         $this->scopeConfig = $context->getScopeConfig();
@@ -35,9 +43,15 @@ class AddToCart extends \Magento\Catalog\Block\Product\View
     }
     public function getStockItem($productId)
     {
-        return $this->_stockItemRepository->get(11);
-       // return $this->_stockItemRepository->get($productId);
+        $productStockObj = $this->_objectManager->get('Magento\CatalogInventory\Api\StockRegistryInterface')->getStockItem($productId);
+        return $productStockObj->getQty();
+
     }
+
+    public function isValutationProduct($_product){
+        return $_product->getTypeId() === "valutation_product";
+    }
+
     public function getPreorderButtonText()
     {
         return $this->scopeConfig->getValue('drc_preorder_setting/display/button_text', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);

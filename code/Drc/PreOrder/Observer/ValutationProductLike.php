@@ -40,6 +40,7 @@ class ValutationProductLike implements ObserverInterface
     }
 
     /**
+     * TODO DA RIFARE
      * add to cart event handler.
      *
      * @param \Magento\Framework\Event\Observer $observer
@@ -175,7 +176,7 @@ class ValutationProductLike implements ObserverInterface
 			 $price =  round($p->getPrice(),2) * $qty;
 		     $sum+=$price;
 
-				\Zend_Debug::dump("ID = $id - QTY = $qty PREZZO $price" );	
+			//	\Zend_Debug::dump("ID = $id - QTY = $qty PREZZO $price" );
 		}
 
 
@@ -191,7 +192,7 @@ class ValutationProductLike implements ObserverInterface
 
 		$credit_limit = intval($value);
 		
-		\Zend_Debug::dump("credit limit =".$credit_limit); 
+		//\Zend_Debug::dump("credit limit =".$credit_limit);
 		
 	
        if($prezzo > $credit_limit){
@@ -213,20 +214,10 @@ class ValutationProductLike implements ObserverInterface
 			exit;	
 		}
 		
-	//	\Zend_Debug::dump("customer credit =".$current_credit." SOMMA CARRELLO E NUOVI PRODOTTI $sum"); 
-		
-		
-		//END CREDIT LIMIT
-		
-		
-		
-		
         return $this;
       }
 	
 	
-	
-			  //controlla se esiste il cliente nella tabella, se si ritorna il credit
       private function existsCustomer($customer_id, $mese, $connection, $tableName){
         $sql = "SELECT credit, data FROM " . $tableName . " WHERE id_customer = $customer_id LIMIT 1";
         $result = $connection->fetchAll($sql);
