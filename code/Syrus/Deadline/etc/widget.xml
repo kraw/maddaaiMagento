@@ -79,6 +79,9 @@
                     <option name="default" value="Syrus_Deadline::product/widget/content/grid.phtml" selected="true">
                         <label translate="true">Default Template</label>
                     </option>
+                    <option name="homepage" value="Syrus_Deadline::product/widget/content/homepage.phtml">
+                        <label translate="true">Homepage Template</label>
+                    </option>
                 </options>
             </parameter>
 

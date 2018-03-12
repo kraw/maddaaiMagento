@@ -17,25 +17,16 @@
 <?php if ($exist = ($block->getProductCollection() && $block->getProductCollection()->getSize())):?>
 <?php
     $type = 'widget-product-grid';
-
     $mode = 'grid';
-
     $image = 'new_products_content_widget_grid';
     $title = $block->getTitle() ? __($block->getTitle()) : '';
     $items = $block->getProductCollection()->getItems();
-
     $showWishlist = false;
     $showCompare = false;
     $showCart = true;
     $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::DEFAULT_VIEW;
     $description = false;
     $active = boolval($this->helper('Drc\PreOrder\Helper\Check')->checkEnable());
-    $timer = $this->helper('Drc\PreOrder\Helper\Check')->displayTimer();
-
-    $displayTimer = ($active == 1) && ($timer > 0);
-
-    $now = new \DateTime();
-    $now->modify("+$timer days");
 
 ?>
     <div class="block widget block-products-list <?php /* @escapeNotVerified */ echo $mode; ?>">
