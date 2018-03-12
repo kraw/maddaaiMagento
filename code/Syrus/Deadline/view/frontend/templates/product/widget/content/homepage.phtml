@@ -20,7 +20,12 @@
     $mode = 'grid';
     $image = 'new_products_content_widget_grid';
     $title = $block->getTitle() ? __($block->getTitle()) : '';
-    $items = $block->getProductCollection()->getItems();
+
+    $itemsConclusi = $block->createClosedBidCollection()->getItems();
+    $itemsInScadenza = $block->createDeadlineCollection()->getItems();
+    $items = $block->createBidCollection()->getItems();
+
+
     $showWishlist = false;
     $showCompare = false;
     $showCart = true;

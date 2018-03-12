@@ -85,36 +85,32 @@ class ProductsList extends \Magento\CatalogWidget\Block\Product\ProductsList imp
                 $this->getBidProducts($collection, $now);
         }
 
+        $collection = $this->_addProductAttributesAndPrices($collection)
+            ->addStoreFilter()
+            ->setPageSize($this->getPageSize())
+            ->setCurPage($this->getRequest()->getParam($this->getData('page_var_name'), 1));
 
-    /*    if ($filterByType === "valutation_product")
-           // $collection->addAttributeToFilter('type_id', array('eq' => 'valutation_product'));
-        else if($filters !== "conclusi")
-           // $collection->addFieldToFilter('bid_end_date', ['gteq' => $now->format('Y-m-d H:i:s')]);
+        $conditions = $this->getConditions();
+        $conditions->collectValidatedAttributes($collection);
+        $this->sqlBuilder->attachConditionToCollection($collection, $conditions);
 
-        if ($filterByType !== "valutation_product")
-           // $collection->addFieldToFilter('bid_target', ['gt' => 0]);
-//
-        if ($filters === "in_scadenza") {
-            //$now->modify(self::$AVAILABILITY_RANGE);
-            //$collection->addFieldToFilter('bid_end_date', ['lteq' => $now->format('Y-m-d H:i:s')]);
+        return $collection;
+    }
 
-        } else if ($filters === "conclusi") {
-          //  $collection->addFieldToFilter('bid_end_date', ['lteq' => $now->format('Y-m-d H:i:s')]);
-            //$collection->addFieldToFilter('bid_target', ['gteq' => 'qty']);
-            /** @var $collection \Magento\Catalog\Model\ResourceModel\Product\Collection */
-            //$new_collection = new \Magento\Framework\Data\Collection();
-            //$new_collection->removeAllItems();
-            /*$cnt = 0;
-            foreach ($collection as $product) {
-                if ($product->getData('bid_target') >= $this->getQty($product->getId())) {
-                    $new_collection->addItem($product);
-                    $cnt++;
-                }
-                if ($cnt >= $this->getData('number_of_items')) break;
-            }
-             $collection = $new_collection;
-        }
-*/
+    private function getCollectionByTemplate($filters){
+        /** @var $collection \Magento\Catalog\Model\ResourceModel\Product\Collection */
+        $collection = $this->productCollectionFactory->create();
+        $collection->setVisibility($this->catalogProductVisibility->getVisibleInCatalogIds());
+        $collection->addAttributeToSort($this->getSortBy(), $this->getSortOrder());
+        $this->_stockFilter->addInStockFilterToCollection($collection);
+
+        $now = new DateTime();
+        if ($filters === "conclusi")
+            $this->getClosedBidProducts($collection, $now);
+        elseif ($filters === "in_scadenza")
+            $this->getDeadlineProducts($collection, $now);
+        else
+            $this->getBidProducts($collection, $now);
 
         $collection = $this->_addProductAttributesAndPrices($collection)
             ->addStoreFilter()
@@ -126,6 +122,27 @@ class ProductsList extends \Magento\CatalogWidget\Block\Product\ProductsList imp
         $this->sqlBuilder->attachConditionToCollection($collection, $conditions);
 
         return $collection;
+    }
+
+    /**
+     * @return $this|Collection
+     */
+    public function createDeadlineCollection(){
+        return $this->getCollectionByTemplate('in_scadenza');
+    }
+
+    /**
+     * @return $this|Collection
+     */
+    public function createClosedBidCollection(){
+        return $this->getCollectionByTemplate('conclusi');
+    }
+
+    /**
+     * @return $this|Collection
+     */
+    public function createBidCollection(){
+        return $this->getCollectionByTemplate(FALSE);
     }
 
 
