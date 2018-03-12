@@ -1,13 +1,14 @@
 <?php
 namespace Drc\PreOrder\Block;
 
-use Magento\Framework\View\Element\Template;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
+use \Magento\Framework\App\ObjectManager;
 
 class ListProduct extends \Magento\Catalog\Block\Product\ListProduct
 {
 
     protected $_stockItemRepository;
+    protected $_stockRegistry;
     protected $scopeConfig;
     protected $bundleProduct;
     public function __construct(
@@ -31,11 +32,12 @@ class ListProduct extends \Magento\Catalog\Block\Product\ListProduct
             $urlHelper,
             $data
         );
+        $this->_stockRegistry =  ObjectManager::getInstance()->get('\Magento\CatalogInventory\Api\StockRegistryInterface');
     }
+
     public function getStockItem($productId)
     {
-        return $this->_stockItemRepository->get($productId);
-        //return $this->_stockItemRepository->get(11);
+        return $this->_stockRegistry->getStockItem($productId);
     }
     public function getPreorderButtonText()
     {

@@ -241,6 +241,11 @@ class ProductsList extends \Magento\CatalogWidget\Block\Product\ProductsList imp
         return  $product->getData('bid_target') ===  $this->getQty($product->getTypeId());
     }
 
+    /**
+     *
+     * @param Product $product
+     * @return mixed
+     */
     public function getMembershipNumber(Product $product){
         if($this->isValutationProduct($product->getTypeId()))
             return $product->getData('valutation_product_likes');
