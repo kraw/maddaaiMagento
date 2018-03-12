@@ -56,7 +56,7 @@ $active = $this->helper('Drc\PreOrder\Helper\Check')->checkEnable();
                 <ol class="products list items product-items">
                     <?php /** @var $_product \Magento\Catalog\Model\Product */ ?>
                     <?php foreach ($_productCollection as $_product):  /* @escapeNotVerified */
-                        if($iterator > 5) break;
+                       // if($iterator > 5) break;
                         $bid_end_date = $_product->getData('bid_end_date');
                         $today = date("Y-m-d");
                         $range_date = new DateTime($bid_end_date);
@@ -166,7 +166,7 @@ $active = $this->helper('Drc\PreOrder\Helper\Check')->checkEnable();
             			$range_date = new DateTime($bid_end_date);
             			$range_date->modify('-5 day');
 						if($today >= $range_date->format('Y-m-d')) continue;
-                        if($iterator > 5) break;
+                       // if($iterator > 5) break;
                         echo($iterator++ == 1) ? '<li class="item product product-item">' : '</li><li class="item product product-item">' ?>
                         <div class="product-item-info" data-container="product-grid">
                             <?php

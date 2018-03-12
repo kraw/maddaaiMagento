@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
-    <widget id="inchoo_products_list" class="Syrus\Deadline\Block\Product\ProductsList"
+    <widget id="maddaai_products_list" class="Syrus\Deadline\Block\Product\ProductsList"
             placeholder_image="Syrus_Deadline::images/bid_image.png">
         <label translate="true">Bid Product List</label>
         <description>Maddaai - Extended Bid Products List</description>
@@ -9,43 +9,92 @@
             <parameter name="title" xsi:type="text" required="false" visible="true">
                 <label translate="true">Titolo</label>
             </parameter>
+            <parameter name="show_pager" xsi:type="select" visible="true"
+                       source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label translate="true">Mostra paginazione</label>
+            </parameter>
+            <parameter name="products_per_page" xsi:type="text" required="true" visible="true">
+                <label translate="true">Numero prodotti per pagina</label>
+                <depends>
+                    <parameter name="show_pager" value="1" />
+                </depends>
+                <value>5</value>
+            </parameter>
+            <parameter name="products_count" xsi:type="text" required="true" visible="true">
+                <label translate="true">Numero prodotti da mostrare</label>
+                <value>10</value>
+            </parameter>
+            <parameter name="product_type" xsi:type="select" required="true" visible="true">
+                <label translate="true">Tipologia di prodotto</label>
+                <options>
+                    <option name="bid" value="bid" selected="true">
+                        <label translate="true">Bid</label>
+                    </option>
+                    <option name="valutation_product" value="valutation_product">
+                        <label translate="true">Valutation product</label>
+                    </option>
+                </options>
+            </parameter>
+
+            <parameter name="product_filter" xsi:type="select" required="true" visible="true">
+                <label translate="true">Filtra per Scadenza Bid</label>
+                <options>
+                    <option name="in_corso" value="in_corso" selected="true">
+                        <label translate="true">In Corso</label>
+                    </option>
+                    <option name="in_scadenza" value="in_scadenza" >
+                        <label translate="true">In Scadenza</label>
+                    </option>
+                    <option name="conclusi" value="conclusi">
+                        <label translate="true">Conclusi</label>
+                    </option>
+                </options>
+            </parameter>
+
+            <parameter name="collection_sort_by" xsi:type="select" visible="true">
+                <label translate="true">Ordina prodotti per</label>
+                <options>
+                    <option name="created_at" value="created_at" selected="true">
+                        <label translate="true">Data di creazione</label>
+                    </option>
+                    <option name="bid_end_date" value="bid_end_date" >
+                        <label translate="true">Scadenza Bid</label>
+                    </option>
+                    <option name="bid_start_date" value="bid_start_date">
+                        <label translate="true">Creazione Bid</label>
+                    </option>
+                    <option name="bid_target" value="bid_target">
+                        <label translate="true">Bid Target</label>
+                    </option>
+                    <option name="valutation_product_likes" value="valutation_product_likes">
+                        <label translate="true">Like Target</label>
+                    </option>
+                </options>
+            </parameter>
+
 
             <parameter name="template" xsi:type="select" required="true" visible="true">
                 <label translate="true">Template</label>
                 <options>
-                    <option name="default" value="Syrus_Deadline::product/widget/content/list.phtml" selected="true">
-                        <label translate="true">Home Bid Template</label>
-                    </option>
-                    <option name="home_5" value="Syrus_Deadline::product/widget/content/home_list.phtml">
-                        <label translate="true">5 Bid Template</label>
-                    </option>
-                    <option name="in_scadenza" value="Syrus_Deadline::product/widget/content/in_scadenza.phtml">
-                        <label translate="true">In Scadenza Bid Template</label>
-                    </option>
-                    <option name="conclusi" value="Syrus_Deadline::product/widget/content/conclusi.phtml">
-                        <label translate="true">Conclusi Bid Template</label>
-                    </option>
-                    <option name="proposte" value="Syrus_Deadline::product/widget/content/proposte.phtml">
-                        <label translate="true">Proposte Bid Template</label>
+                    <option name="default" value="Syrus_Deadline::product/widget/content/grid.phtml" selected="true">
+                        <label translate="true">Default Template</label>
                     </option>
                 </options>
             </parameter>
+
             <parameter name="cache_lifetime" xsi:type="text" visible="true">
-                <label translate="true">Cache Lifetime (Seconds)</label>
-                <description translate="true">86400 by default, if not set. To refresh instantly, clear the Blocks HTML Output cache.</description>
+                <label translate="true">Durata cache (secondi)</label>
+                <description translate="true">86400 per impostazione predefinita, se non impostato. Per aggiornare istantaneamente, cancellare la cache dell'output HTML dei blocchi.</description>
             </parameter>
             <parameter name="condition" xsi:type="conditions" visible="true" required="true" sort_order="10"
                        class="Magento\CatalogWidget\Block\Product\Widget\Conditions">
-                <label translate="true">Conditions</label>
+                <label translate="true">Condizioni</label>
             </parameter>
         </parameters>
+
         <containers>
             <container name="content">
-                <template name="home" value="default" />
-                <template name="scadenza" value="in_scadenza" />
-                <template name="conclusi" value="conclusi" />
-                <template name="proposte" value="proposte" />
-                <template name="homelist" value="home_5" />
+                <template name="default" value="default" />
             </container>
 
         </containers>

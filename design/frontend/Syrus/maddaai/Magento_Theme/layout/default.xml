@@ -27,7 +27,11 @@
 
         <referenceBlock name="footer_links" remove="true"/>
         <referenceBlock name="catalog.compare.sidebar" remove="true"/>
+        <referenceBlock name="view.addto.compare" remove="true" />
+        <referenceBlock name="view.addto.wishlist" remove="true" />
+
         <referenceContainer name="sidebar.additional" remove="true"/>
+
 
         <move element="copyright" destination="before.body.end"/>
     </body>

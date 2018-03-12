@@ -29,7 +29,12 @@ class Cart extends \Magento\Checkout\Block\Cart\Item\Renderer
         $this->scopeConfig = $context->getScopeConfig();
         parent::__construct($context, $productConfig, $checkoutSession, $imageBuilder, $urlHelper, $messageManager, $priceCurrency, $moduleManager, $messageInterpretationStrategy, $data);
     }
-   
+
+    /**
+     * TODO Da cambiare
+     * @param $productId
+     * @return \Magento\CatalogInventory\Api\Data\StockItemInterface
+     */
     public function getStockItem($productId)
     {
         return $this->_stockItemRepository->get(11);
