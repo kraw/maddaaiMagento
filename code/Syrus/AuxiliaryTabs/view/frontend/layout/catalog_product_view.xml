@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="product.info.details">
+            <block class="Magento\Catalog\Block\Product\View" name="maggiore-informazioni" template="Syrus_AuxiliaryTabs::more_info.phtml" group="detailed_info" >
+                <arguments>
+                    <argument translate="true" name="title" xsi:type="string">Maggior informazioni</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+
+        <referenceBlock name="product.info.details">
+            <block class="Magento\Catalog\Block\Product\View" name="scheda-extra" template="Syrus_AuxiliaryTabs::auxiliary_tab.phtml" group="detailed_info" >
+                <arguments>
+                    <argument translate="true" name="title" xsi:type="string">Scheda Extra</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+
+    </body>
+</page>
