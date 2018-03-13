@@ -28,4 +28,7 @@ body{
 	display:none; 
 }
 
+.product-info-main .product-info-price .old-price .price-wrapper .price{
+    text-decoration: line-through!important;
+}
 
