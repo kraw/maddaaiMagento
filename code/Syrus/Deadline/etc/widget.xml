@@ -72,6 +72,18 @@
                 </options>
             </parameter>
 
+            <parameter name="collection_sort_order" xsi:type="select" visible="true">
+                <label translate="true">Seleziona un ordinamento</label>
+                <options>
+                    <option name="desc" value="desc" selected="true">
+                        <label translate="true">Decrescente</label>
+                    </option>
+                    <option name="asc" value="asc" >
+                        <label translate="true">Crescente</label>
+                    </option>
+                </options>
+            </parameter>
+
 
             <parameter name="template" xsi:type="select" required="true" visible="true">
                 <label translate="true">Template</label>

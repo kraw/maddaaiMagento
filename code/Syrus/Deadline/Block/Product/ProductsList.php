@@ -10,10 +10,7 @@ class ProductsList extends \Magento\CatalogWidget\Block\Product\ProductsList imp
     const DEFAULT_COLLECTION_SORT_BY = 'created_at';
     const DEFAULT_COLLECTION_ORDER = 'desc';
 
-    /**
-     * Messaggio di testo visibile sul pulsante
-     */
-    const BUTTON_TEXT = "Una rapida occhiata";
+
     /**
      * Range di scadenza in giorni
      */
@@ -22,7 +19,6 @@ class ProductsList extends \Magento\CatalogWidget\Block\Product\ProductsList imp
     protected $_stockFilter;
     protected $_stockRegistry;
     protected $scopeConfig;
-
 
     public function __construct(
         \Magento\Catalog\Block\Product\Context $context,
@@ -60,11 +56,12 @@ class ProductsList extends \Magento\CatalogWidget\Block\Product\ProductsList imp
      */
     public function createCollection()
     {
+        $inStock = true;
         /** @var $collection \Magento\Catalog\Model\ResourceModel\Product\Collection */
         $collection = $this->productCollectionFactory->create();
         $collection->setVisibility($this->catalogProductVisibility->getVisibleInCatalogIds());
         $collection->addAttributeToSort($this->getSortBy(), $this->getSortOrder());
-        $this->_stockFilter->addInStockFilterToCollection($collection);
+
 
         $filterByType = $this->getData('product_type');
         $filters = $this->getData('product_filter');
@@ -73,10 +70,11 @@ class ProductsList extends \Magento\CatalogWidget\Block\Product\ProductsList imp
 
         if ($filterByType === "valutation_product")
             $this->getValutationProducts($collection, $now);
-
         else {
-            if ($filters === "conclusi")
+            if ($filters === "conclusi"){
                 $this->getClosedBidProducts($collection, $now);
+                $inStock = false;
+            }
 
             elseif ($filters === "in_scadenza")
                 $this->getDeadlineProducts($collection, $now);
@@ -84,6 +82,11 @@ class ProductsList extends \Magento\CatalogWidget\Block\Product\ProductsList imp
             else
                 $this->getBidProducts($collection, $now);
         }
+
+        if($inStock)
+            $this->_stockFilter->addInStockFilterToCollection($collection);
+
+
 
         $collection = $this->_addProductAttributesAndPrices($collection)
             ->addStoreFilter()
@@ -102,15 +105,19 @@ class ProductsList extends \Magento\CatalogWidget\Block\Product\ProductsList imp
         $collection = $this->productCollectionFactory->create();
         $collection->setVisibility($this->catalogProductVisibility->getVisibleInCatalogIds());
         $collection->addAttributeToSort($this->getSortBy(), $this->getSortOrder());
-        $this->_stockFilter->addInStockFilterToCollection($collection);
 
         $now = new DateTime();
         if ($filters === "conclusi")
             $this->getClosedBidProducts($collection, $now);
-        elseif ($filters === "in_scadenza")
+        elseif ($filters === "in_scadenza"){
+            $this->_stockFilter->addInStockFilterToCollection($collection);
             $this->getDeadlineProducts($collection, $now);
-        else
+        }
+        else{
+            $this->_stockFilter->addInStockFilterToCollection($collection);
             $this->getBidProducts($collection, $now);
+        }
+
 
         $collection = $this->_addProductAttributesAndPrices($collection)
             ->addStoreFilter()
@@ -161,6 +168,7 @@ class ProductsList extends \Magento\CatalogWidget\Block\Product\ProductsList imp
      */
     private function getBidProducts(Collection $collection, DateTime $dateTime){
         $collection->addFieldToFilter('bid_target', ['gt' => 0]);
+        $dateTime->modify(self::$AVAILABILITY_RANGE);
         $collection->addFieldToFilter('bid_end_date', ['gteq' => $dateTime->format('Y-m-d H:i:s')]);
 
     }
