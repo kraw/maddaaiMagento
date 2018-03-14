@@ -31,4 +31,13 @@ body{
 .product-info-main .product-info-price .old-price .price-wrapper .price{
     text-decoration: line-through!important;
 }
+.product-item .price-box .price-label{
+    display: none!important;
+}
+.product-item .old-price .price{
+    text-decoration: line-through!important;
+}
 
+.product-options-bottom .price-box .price-container .price, .product-info-price .price-box .price-container .price{
+    color: #EB6445!important;
+}
