@@ -1,11 +1,13 @@
 <?php
+
 namespace Drc\PreOrder\Observer;
+
 use Zend_Debug;
 
 class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
 {
 
-  protected $_storeManager;
+    protected $_storeManager;
 
 
     public function __construct(
@@ -40,359 +42,356 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
     }
 
 
-        // ================   START TRIGGER ======================== //
-  public function execute(\Magento\Framework\Event\Observer $observer)
-  {
+    // ================   START TRIGGER ======================== //
+    public function execute(\Magento\Framework\Event\Observer $observer)
+    {
 
 
-    $base_url = $this->_context->getStoreManager()->getStore()->getBaseUrl();
-    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-	  
-    $scopeConfig = $objectManager->create('Magento\Framework\App\Config\ScopeConfigInterface');
-	  
-	  
-	//CREDIT LIMIT
-	$sectionId = "drc_preorder_setting";
-	$groupId = "creditlimit";
-	$fieldId = "creditlimit";
-	$configPath = $sectionId.'/'.$groupId.'/'.$fieldId;
-    $value =  $scopeConfig->getValue(
-        $configPath,
-        \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-    );
-	  
-	$credit_limit = intval($value);
+        $base_url = $this->_context->getStoreManager()->getStore()->getBaseUrl();
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+        $scopeConfig = $objectManager->create('Magento\Framework\App\Config\ScopeConfigInterface');
 
 
+        //CREDIT LIMIT
+        $sectionId = "drc_preorder_setting";
+        $groupId = "creditlimit";
+        $fieldId = "creditlimit";
+        $configPath = $sectionId . '/' . $groupId . '/' . $fieldId;
+        $value = $scopeConfig->getValue(
+            $configPath,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
 
-    $imageHelperFactory = $objectManager->create("\Magento\Catalog\Helper\ImageFactory");
-  //  Zend_Debug::dump(get_class_methods($this->_context));
+        $credit_limit = intval($value);
 
 
-    $customerData = $this->_session->getCustomerData();
-    $logged = $this->_session->isLoggedIn();
+        $imageHelperFactory = $objectManager->create("\Magento\Catalog\Helper\ImageFactory");
+        //  Zend_Debug::dump(get_class_methods($this->_context));
+
+
+        $customerData = $this->_session->getCustomerData();
+        $logged = $this->_session->isLoggedIn();
 
 //    Zend_Debug::dump("is logged = ".$logged);
 
-    if($logged){
+        if ($logged) {
 
-      $name = $customerData->getFirstname();
-      $products = $this->cart->getItems();
-      $email = $customerData->getEmail();
-      $id_customer = $customerData->getId();
-
-
-	  //ho acquisito il token dall'email e procedo al checkout
-      if(isset($_COOKIE["$id_customer"])){
-        $token = $_COOKIE["$id_customer"];
-
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
-        $connection = $resource->getConnection();
-        $tableName = $resource->getTableName('drc_preorder_pending');
-;
-
-		 $pro = array();
-		 $checkout = true;
-		 foreach ($products as $product) {
-			 $id = $product->getProductId();
-			 
-		///	 \Zend_Debug::dump("ID PRODOTTO = ".$id);
-		//	 \Zend_Debug::dump("ID CUSTOMER = ".$id_customer);
-
-			 $sql = "SELECT acquistabile, deleted FROM " . $tableName . " WHERE id_prodotto = $id AND id_customer = $id_customer AND token = '".$token."' LIMIT 1";
-        	 $result = $connection->fetchAll($sql);
-			 
-			// \Zend_Debug::dump($result);
-
-			 if( count($result)>0 && !($result[0]['acquistabile'] == "1" && $result[0]['deleted'] == "0" )) $checkout = false;
-
-		 }
-			if($checkout) return $this;
-      }
+            $name = $customerData->getFirstname();
+            $products = $this->cart->getItems();
+            $email = $customerData->getEmail();
+            $id_customer = $customerData->getId();
 
 
-      //GENERO TOKEN
-      $token = md5(uniqid($email, true));
+            //ho acquisito il token dall'email e procedo al checkout
+            if (isset($_COOKIE["$id_customer"])) {
+                $token = $_COOKIE["$id_customer"];
 
-      //bid raggiunti
-      $bid_raggiunti = array();
+                $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                $resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
+                $connection = $resource->getConnection();
+                $tableName = $resource->getTableName('drc_preorder_pending');;
 
-      // Step1 - incremento il bid del prodotto
-      foreach ($products as $product) {
-        $name = $product->getName();  //nome
-        $id_product = $product->getProductId(); //id prodotto
-        $qty = $product->getQty();  //quantità nel carrello
-        $prodotto = $this->_productLoader->create()->load($id_product); //oggetto prodotto
+                $pro = array();
+                $checkout = true;
+                foreach ($products as $product) {
+                    $id = $product->getProductId();
 
+                    ///	 \Zend_Debug::dump("ID PRODOTTO = ".$id);
+                    //	 \Zend_Debug::dump("ID CUSTOMER = ".$id_customer);
 
+                    $sql = "SELECT acquistabile, deleted FROM " . $tableName . " WHERE id_prodotto = $id AND id_customer = $id_customer AND token = '" . $token . "' LIMIT 1";
+                    $result = $connection->fetchAll($sql);
 
+                    // \Zend_Debug::dump($result);
 
-		  //mod credit limit
-		  $customer_id = $id_customer;
-            $prezzo = round($product->getPrice(),2);
+                    if (count($result) > 0 && !($result[0]['acquistabile'] == "1" && $result[0]['deleted'] == "0")) $checkout = false;
 
-            if($prezzo > $credit_limit){
-              $urlBuilder = $this->_context->getUrlBuilder();
-              $CustomRedirectionUrl = $urlBuilder->getUrl('preorder/confirmcheckout/annull?er=4');
-              $this->_responseFactory->create()->setRedirect($CustomRedirectionUrl)->sendResponse();
-              exit;
+                }
+                if ($checkout) return $this;
             }
 
-            $t=date('d-m-Y');
-            $mese = intval(date("m",strtotime($t)));
 
-            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-            $resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
-            $connection = $resource->getConnection();
-            $tableName = $resource->getTableName('drc_credit_limit');
+            //GENERO TOKEN
+            $token = md5(uniqid($email, true));
 
-            $current_credit = floatval($this->existsCustomer(intval($customer_id), $mese, $connection, $tableName));
+            //bid raggiunti
+            $bid_raggiunti = array();
 
-            if($current_credit != -1){
-
-              $new_credit = $current_credit + ($prezzo * $qty);
-
-
-              if($new_credit > $credit_limit){
-                $urlBuilder = $this->_context->getUrlBuilder();
-                $CustomRedirectionUrl = $urlBuilder->getUrl('preorder/confirmcheckout/annull?er=3');
-                $this->_responseFactory->create()->setRedirect($CustomRedirectionUrl)->sendResponse();
-                exit;
-              }
+            // Step1 - incremento il bid del prodotto
+            foreach ($products as $product) {
+                $name = $product->getName();  //nome
+                $id_product = $product->getProductId(); //id prodotto
+                $qty = $product->getQty();  //quantità nel carrello
+                $prodotto = $this->_productLoader->create()->load($id_product); //oggetto prodotto
 
 
-              $this->addCredit($customer_id, $new_credit, $connection, $tableName);
+                //mod credit limit
+                $customer_id = $id_customer;
+                $prezzo = round($product->getPrice(), 2);
 
-            }else{
-              $this->addCustomer($customer_id,$prezzo * $qty,$connection,$tableName);
+                if ($prezzo > $credit_limit) {
+                    $urlBuilder = $this->_context->getUrlBuilder();
+                    $CustomRedirectionUrl = $urlBuilder->getUrl('preorder/confirmcheckout/annull?er=4');
+                    $this->_responseFactory->create()->setRedirect($CustomRedirectionUrl)->sendResponse();
+                    exit;
+                }
+
+                $t = date('d-m-Y');
+                $mese = intval(date("m", strtotime($t)));
+
+                $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                $resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
+                $connection = $resource->getConnection();
+                $tableName = $resource->getTableName('drc_credit_limit');
+
+                $current_credit = floatval($this->existsCustomer(intval($customer_id), $mese, $connection, $tableName));
+
+                if ($current_credit != -1) {
+
+                    $new_credit = $current_credit + ($prezzo * $qty);
+
+
+                    if ($new_credit > $credit_limit) {
+                        $urlBuilder = $this->_context->getUrlBuilder();
+                        $CustomRedirectionUrl = $urlBuilder->getUrl('preorder/confirmcheckout/annull?er=3');
+                        $this->_responseFactory->create()->setRedirect($CustomRedirectionUrl)->sendResponse();
+                        exit;
+                    }
+
+
+                    $this->addCredit($customer_id, $new_credit, $connection, $tableName);
+
+                } else {
+                    $this->addCustomer($customer_id, $prezzo * $qty, $connection, $tableName);
+                }
+
+                //end mod credit limit
+
+
+                //TODO da rifare
+                $product_stock = $this->_stockItemRepository->get(11);
+                $stock = $product_stock->getQty(); //quantità in stock
+
+
+                $bid_prodotto = $prodotto->getResource()->getAttribute("bid_target")->getFrontend()->getValue($prodotto); //bid
+                $bid_start_date = $prodotto->getResource()->getAttribute("bid_start_date")->getFrontend()->getValue($prodotto);
+                $bid_end_date = $prodotto->getResource()->getAttribute("bid_end_date")->getFrontend()->getValue($prodotto);
+
+                // Zend_Debug::dump("Bid prodotto = ".$bid_prodotto);
+                // Zend_Debug::dump("Quantità carrello =".$qty);
+                //Zend_Debug::dump("Stock = ".$stock);
+
+                //update bid
+                if (($bid_prodotto + $qty) <= $stock) {
+                    //Zend_Debug::dump("#bid < #stock");
+                    $prodotto->setData('bid_target', $bid_prodotto + $qty);
+                    $prodotto->save();
+                    //  Zend_Debug::dump($prodotto);
+
+                    //Step2 - aggiungo un record nella tabella dei preorder_pending per ogni prodotto nel carrello
+                    $token = md5(uniqid($email, true));
+                    $this->_preModel->insertPreorderPending($id_customer, $email, $id_product, $token, $qty);
+
+                    //email di adesione
+                    $url_image = $imageHelperFactory->create()->init($prodotto, 'product_base_image')->getUrl(); //immagine del prodotto
+                    $this->send($email, "", $id_customer, $base_url, $url_image, "", $id_product, $qty, true);
+
+                    $bid_prodotto = $prodotto->getResource()->getAttribute("bid_target")->getFrontend()->getValue($prodotto); //bid updated
+                } else {
+                    //annullo aggiunta dei bid
+                    //  Zend_Debug::dump("#bid > #stock");
+                    $urlBuilder = $this->_context->getUrlBuilder();
+                    $event = $observer->getEvent();
+                    $CustomRedirectionUrl = $urlBuilder->getUrl('preorder/confirmcheckout/annull');
+                    $this->_responseFactory->create()->setRedirect($CustomRedirectionUrl)->sendResponse();
+                    exit;
+
+                }
+
+                if ($bid_prodotto == $stock) {
+                    $bid_raggiunti[] = $id_product;
+
+                    //cambiare lo stato del prodotto in stock
+                    $product_stock->setData('is_in_stock', 1);
+                    //setto lo stato di conclusione  del bid
+                    $product_stock->setData('bid_concluso', 1);
+                    $product_stock->save();
+                }
             }
 
-		  //end mod credit limit
 
-
-          //TODO da rifare
-        $product_stock = $this->_stockItemRepository->get(11);
-        $stock = $product_stock->getQty(); //quantità in stock
-
-
-        $bid_prodotto = $prodotto->getResource()->getAttribute("bid_target")->getFrontend()->getValue($prodotto); //bid
-        $bid_start_date = $prodotto->getResource()->getAttribute("bid_start_date")->getFrontend()->getValue($prodotto);
-        $bid_end_date = $prodotto->getResource()->getAttribute("bid_end_date")->getFrontend()->getValue($prodotto);
-
-       // Zend_Debug::dump("Bid prodotto = ".$bid_prodotto);
-       // Zend_Debug::dump("Quantità carrello =".$qty);
-        //Zend_Debug::dump("Stock = ".$stock);
-
-        //update bid
-        if( ($bid_prodotto + $qty) <= $stock){
-          //Zend_Debug::dump("#bid < #stock");
-          $prodotto->setData('bid_target', $bid_prodotto + $qty);
-          $prodotto->save();
-        //  Zend_Debug::dump($prodotto);
-
-          //Step2 - aggiungo un record nella tabella dei preorder_pending per ogni prodotto nel carrello
-	      $token = md5(uniqid($email, true));
-          $this->_preModel->insertPreorderPending($id_customer, $email, $id_product ,$token, $qty);
-
-			//email di adesione
-        	$url_image = $imageHelperFactory->create()->init($prodotto, 'product_base_image')->getUrl(); //immagine del prodotto
-        	$this->send($email,"",$id_customer,$base_url, $url_image, "", $id_product, $qty, true);
-
-          $bid_prodotto = $prodotto->getResource()->getAttribute("bid_target")->getFrontend()->getValue($prodotto); //bid updated
-        }else{
-	  //annullo aggiunta dei bid
-        //  Zend_Debug::dump("#bid > #stock");
-			$urlBuilder = $this->_context->getUrlBuilder();
-			$event = $observer->getEvent();
-			$CustomRedirectionUrl = $urlBuilder->getUrl('preorder/confirmcheckout/annull');
-			$this->_responseFactory->create()->setRedirect($CustomRedirectionUrl)->sendResponse();
-			exit;
-
-        }
-
-        if($bid_prodotto == $stock){
-            $bid_raggiunti[] = $id_product;
-
-            //cambiare lo stato del prodotto in stock
-            $product_stock->setData('is_in_stock',1);
-	    //setto lo stato di conclusione  del bid
-	    $product_stock->setData('bid_concluso', 1);
-            $product_stock->save();
-        }
-      }
-
-
-      //Step3 - se ha raggiunto la soglia, spedisco l'email a tutti i customer per procedere il checkout
-      if(count($bid_raggiunti) > 0){
-        foreach ($bid_raggiunti as $id) {
+            //Step3 - se ha raggiunto la soglia, spedisco l'email a tutti i customer per procedere il checkout
+            if (count($bid_raggiunti) > 0) {
+                foreach ($bid_raggiunti as $id) {
 
 //          Zend_Debug::dump("Bid raggiunto per il prodotto = ".$id);
 
-          $preorder_raggiunti = $this->_preModel->getAllCustomerByIdProduct($id);
+                    $preorder_raggiunti = $this->_preModel->getAllCustomerByIdProduct($id);
 
-          $prodotto = $this->_productLoader->create()->load($id); //oggetto prodotto
-          $url_image = $imageHelperFactory->create()->init($prodotto, 'product_base_image')->getUrl(); //immagine del prodotto
+                    $prodotto = $this->_productLoader->create()->load($id); //oggetto prodotto
+                    $url_image = $imageHelperFactory->create()->init($prodotto, 'product_base_image')->getUrl(); //immagine del prodotto
 
 
-          foreach ($preorder_raggiunti as $prag){
-              $email = $prag['email'];
-              $token = $prag['token'];
-      			  $id_preorder = $prag['id'];
-      			  $id_customer = $prag['id_customer'];
-              $quantita = $prag['quantita'];
+                    foreach ($preorder_raggiunti as $prag) {
+                        $email = $prag['email'];
+                        $token = $prag['token'];
+                        $id_preorder = $prag['id'];
+                        $id_customer = $prag['id_customer'];
+                        $quantita = $prag['quantita'];
 
-              //send email customers
-              Zend_Debug::dump($email);
-              $this->send($email,$token,$id_customer,$base_url, $url_image, $id_preorder, $id, $quantita);
-          }
+                        //send email customers
+                        Zend_Debug::dump($email);
+                        $this->send($email, $token, $id_customer, $base_url, $url_image, $id_preorder, $id, $quantita);
+                    }
 
-          $this->send('maddaai.store@gmail.com',"","",$base_url, $url_image, 0, $id, 0);
+                    $this->send('maddaai.store@gmail.com', "", "", $base_url, $url_image, 0, $id, 0);
+                }
+            }
+
+
         }
-      }
 
+
+        //REDIRECT ALLA HOME
+
+        $this->cart->truncate();
+        $this->cart->save();
+
+        $urlBuilder = $this->_context->getUrlBuilder();
+        $event = $observer->getEvent();
+        $CustomRedirectionUrl = $urlBuilder->getUrl('preorder/confirmcheckout/confirm');
+        $this->_responseFactory->create()->setRedirect($CustomRedirectionUrl)->sendResponse();
+
+        exit;
 
     }
 
 
-    //REDIRECT ALLA HOME
-	  
-	  $this->cart->truncate();
-	  $this->cart->save();
-	  
-    $urlBuilder = $this->_context->getUrlBuilder();
-    $event = $observer->getEvent();
-    $CustomRedirectionUrl = $urlBuilder->getUrl('preorder/confirmcheckout/confirm');
-    $this->_responseFactory->create()->setRedirect($CustomRedirectionUrl)->sendResponse();
-
-    exit;
-
-  }
-
-
-
-  //============ UTILITY ============== //
+    //============ UTILITY ============== //
 
     public function getStoreName()
-      {
-          return $this->_storeManager->getStore()->getName();
-      }
+    {
+        return $this->_storeManager->getStore()->getName();
+    }
 
 
-     public function send($email,$token,$id_customer,$base_url,$url_image,$id_preorder,$id_prodotto, $quantita,$adesione = false) {
+    public function send($email, $token, $id_customer, $base_url, $url_image, $id_preorder, $id_prodotto, $quantita, $adesione = false)
+    {
 
-         //Initialize needed variables
-         $your_name = 'MADDAAI STORE';
-         $your_email = 'maddaai.store@gmail.com';
-         $your_password = 'danieledaniele';
-         $send_to_name = 'Hey';
-         $send_to_email = $email ;
+        //Initialize needed variables
+        $your_name = 'MADDAAI STORE';
+        $your_email = 'maddaai.store@gmail.com';
+        $your_password = 'danieledaniele';
+        $send_to_name = 'Hey';
+        $send_to_email = $email;
 
-         //SMTP server configuration
-         $smtpHost = 'smtp.gmail.com';
-         $smtpConf = array(
-          'auth' => 'login',
-          'ssl' => 'ssl',
-          'port' => '465',
-          'username' => $your_email,
-          'password' => $your_password
-         );
-         $transport = new \Zend_Mail_Transport_Smtp($smtpHost, $smtpConf);
-
-
-
-     //DATA CUSTOMER
-		 if($id_customer == ""){
-		 	$nome = "Maddai";
-			$cognome = "Store";
-		 }else{
-			 $customer = $this->customerRepository->getById(intval($id_customer));
-			 $nome = $customer->getFirstname();
-			 $cognome = $customer->getLastname();
-		 }
-
-     //DATA PRODOTTO
-     $prodotto = $this->_productLoader->create()->load($id_prodotto);
-     $nome_prodotto = $prodotto->getName();
-     $prezzo =  $prodotto->getPrice();
-     $short_description = $prodotto->getShortDescription();
+        //SMTP server configuration
+        $smtpHost = 'smtp.gmail.com';
+        $smtpConf = array(
+            'auth' => 'login',
+            'ssl' => 'ssl',
+            'port' => '465',
+            'username' => $your_email,
+            'password' => $your_password
+        );
+        $transport = new \Zend_Mail_Transport_Smtp($smtpHost, $smtpConf);
 
 
-
-		 $body = $this->getBody($url_image,$nome,$cognome,$id_preorder,$nome_prodotto,$prezzo,$short_description,$quantita,$token, $base_url,$adesione);
-
-		 $subject = $adesione ? "[ADESIONE GDA]" : "[GDA RAGGIUNTO]";
-
-         //Create email
-         $mail = new \Zend_Mail();
-         $mail->setFrom($your_email, $your_name);
-         $mail->addTo($email, $send_to_name);
-         $mail->setSubject($subject);
-         $mail->setBodyHtml($body);
-
-         //Send
-         $sent = true;
-         try {
-          $mail->send($transport);
-         }
-         catch (Exception $e) {
-          $sent = false;
-			 Zend_Debug::dump("errore email");
-         }
-         Zend_Debug::dump("email mandata con successo");
-         //Return boolean indicating success or failure
-         return $sent;
-
+        //DATA CUSTOMER
+        if ($id_customer == "") {
+            $nome = "Maddai";
+            $cognome = "Store";
+        } else {
+            $customer = $this->customerRepository->getById(intval($id_customer));
+            $nome = $customer->getFirstname();
+            $cognome = $customer->getLastname();
         }
 
+        //DATA PRODOTTO
+        $prodotto = $this->_productLoader->create()->load($id_prodotto);
+        $nome_prodotto = $prodotto->getName();
+        $prezzo = $prodotto->getPrice();
+        $short_description = $prodotto->getShortDescription();
 
 
+        $body = $this->getBody($url_image, $nome, $cognome, $id_preorder, $nome_prodotto, $prezzo, $short_description, $quantita, $token, $base_url, $adesione);
 
-		  //controlla se esiste il cliente nella tabella, se si ritorna il credit
-      private function existsCustomer($customer_id, $mese, $connection, $tableName){
+        $subject = $adesione ? "[ADESIONE GDA]" : "[GDA RAGGIUNTO]";
+
+        //Create email
+        $mail = new \Zend_Mail();
+        $mail->setFrom($your_email, $your_name);
+        $mail->addTo($email, $send_to_name);
+        $mail->setSubject($subject);
+        $mail->setBodyHtml($body);
+
+        //Send
+        $sent = true;
+        try {
+            $mail->send($transport);
+        } catch (Exception $e) {
+            $sent = false;
+            Zend_Debug::dump("errore email");
+        }
+        Zend_Debug::dump("email mandata con successo");
+        //Return boolean indicating success or failure
+        return $sent;
+
+    }
+
+
+    //controlla se esiste il cliente nella tabella, se si ritorna il credit
+    private function existsCustomer($customer_id, $mese, $connection, $tableName)
+    {
         $sql = "SELECT credit, data FROM " . $tableName . " WHERE id_customer = $customer_id LIMIT 1";
         $result = $connection->fetchAll($sql);
-        if(isset($result[0]['credit'])){
+        if (isset($result[0]['credit'])) {
 
-          if($mese != intval(date("m",strtotime($result[0]['data'])))){
-            $this->resetCredit($customer_id,$connection, $tableName);
-          }
-          return $result[0]['credit'];
-        }else{ return -1; }
-      }
+            if ($mese != intval(date("m", strtotime($result[0]['data'])))) {
+                $this->resetCredit($customer_id, $connection, $tableName);
+            }
+            return $result[0]['credit'];
+        } else {
+            return -1;
+        }
+    }
 
-      private function addCredit($customer_id, $credit, $connection, $tableName){
+    private function addCredit($customer_id, $credit, $connection, $tableName)
+    {
         $data = date('Y/m/d');
-        $sql = "UPDATE " . $tableName . " SET credit = $credit, data = '".$data."' WHERE id_customer = $customer_id";
+        $sql = "UPDATE " . $tableName . " SET credit = $credit, data = '" . $data . "' WHERE id_customer = $customer_id";
         $connection->query($sql);
-      }
+    }
 
-      private function resetCredit($customer_id,$connection, $tableName){
+    private function resetCredit($customer_id, $connection, $tableName)
+    {
         $data = date('Y/m/d');
-        $sql = "UPDATE " . $tableName . " SET credit = 0, data = '".$data."' WHERE id_customer = $customer_id";
+        $sql = "UPDATE " . $tableName . " SET credit = 0, data = '" . $data . "' WHERE id_customer = $customer_id";
         $connection->query($sql);
-      }
+    }
 
-      private function addCustomer($customer_id, $credit, $connection, $tableName){
+    private function addCustomer($customer_id, $credit, $connection, $tableName)
+    {
         $data = date('Y/m/d');
-        $sql = "INSERT INTO " . $tableName . " (id_customer, credit, data) VALUES ( $customer_id, $credit, '".$data."')";
+        $sql = "INSERT INTO " . $tableName . " (id_customer, credit, data) VALUES ( $customer_id, $credit, '" . $data . "')";
         $connection->query($sql);
-      }
+    }
 
 
+    public function getBody($img, $nome, $cognome, $id_preorder, $nome_prodotto, $prezzo, $short_description, $quantita, $token, $base_url, $adesione)
+    {
 
-		    public function getBody($img,$nome,$cognome,$id_preorder,$nome_prodotto,$prezzo,$short_description,$quantita,$token, $base_url,$adesione){
+        $space = "https://ci6.googleusercontent.com/proxy/K9UD7F7-BWO0aVw6xoSNz6TiDMctwkLffAggfmqRkObNkiRZxnZ25ryzdyAngQ5EPh_jT54VaJoLR7ydgNY7_M9V_iAKTrK1P5EjyGI9C6YZQMS2gxaJsEZYVVvTNml0mLcxkx_2WBT5GsQzWwq4YTkgjHc=s0-d-e1-ft#https://developer.magento.com/skin/frontend/rwd/developer_portal/images/emails/blank_email.gif";
+        $mess = $adesione ? "Hai aderito al seguente GDA" : "Il seguente prodotto &egrave; acquistabile";
+        $display = $adesione ? "display:none" : "";
 
-      $space = "https://ci6.googleusercontent.com/proxy/K9UD7F7-BWO0aVw6xoSNz6TiDMctwkLffAggfmqRkObNkiRZxnZ25ryzdyAngQ5EPh_jT54VaJoLR7ydgNY7_M9V_iAKTrK1P5EjyGI9C6YZQMS2gxaJsEZYVVvTNml0mLcxkx_2WBT5GsQzWwq4YTkgjHc=s0-d-e1-ft#https://developer.magento.com/skin/frontend/rwd/developer_portal/images/emails/blank_email.gif";
-	  $mess = $adesione ? "Hai aderito al seguente GDA" : "Il seguente prodotto &egrave; acquistabile";
-      $display = $adesione ? "display:none" : "";
-
-      $data = date('d/m/Y'); //date('d/m/Y H:i:s')
-      return "<div style='font-size:12px;font-style:normal;font-variant-caps:normal;font-weight:normal;letter-spacing:normal;text-align:start;text-indent:0px;text-transform:none;white-space:normal;word-spacing:0px;background-color:rgb(246,246,246);font-family:Verdana,Arial,Helvetica,sans-serif;margin:0px;padding:0px'>
+        $data = date('d/m/Y'); //date('d/m/Y H:i:s')
+        return "<div style='font-size:12px;font-style:normal;font-variant-caps:normal;font-weight:normal;letter-spacing:normal;text-align:start;text-indent:0px;text-transform:none;white-space:normal;word-spacing:0px;background-color:rgb(246,246,246);font-family:Verdana,Arial,Helvetica,sans-serif;margin:0px;padding:0px'>
    <table class='m_-4013470537037416767pad_null' cellspacing='0' cellpadding='0' border='0' height='100%' width='100%' style='font-family:verdana,arial!important'>
       <tbody>
          <tr>
-            <td style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='1' height='10' border='0' style='display:block' class='CToWUd'></td>
+            <td style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='1' height='10' border='0' style='display:block' class='CToWUd'></td>
          </tr>
          <tr>
             <td align='center' valign='top' style='font-family:verdana,arial!important;padding:0px'>
@@ -403,15 +402,15 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
                            <table class='m_-4013470537037416767pad_null' cellspacing='0' cellpadding='0' width='100%' bgcolor='#ffffff' style='font-family:verdana,arial!important;border-collapse:collapse'>
                               <tbody>
                                  <tr>
-                                    <td colspan='3' style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='1' height='20' border='0' style='display:block' class='CToWUd'></td>
+                                    <td colspan='3' style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='1' height='20' border='0' style='display:block' class='CToWUd'></td>
                                  </tr>
                                  <tr>
-                                    <td width='20' style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='20' height='1' border='0' style='display:block' class='CToWUd'></td>
+                                    <td width='20' style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='20' height='1' border='0' style='display:block' class='CToWUd'></td>
                                     <td style='font-family:verdana,arial!important'><a href='http://mail.magento.com/wf/click?upn=KOJzixp5uSEAZuqcF59y1CT8PwoBV2wT5-2B093BameAmZY8YtEfQXsbNNFQom1imV_gJ5ORFI-2BLCaunNoeQsLPaWHt1cio8iG51tRLS-2FGjyH9O1JAd8nWFz5U6KrtwoktoI2FOqq7FPb1c02ruJScJI-2F12SZWX0jPieMnPsyJdAhK2UZQkPj7H-2FT5cWgI6UYVb-2Bwl8rWDRzQ-2FWjT05dpjm5EyJeU40UEJJMTdl0Lscss7roNcwGzCkQI5DNNwdkrzPpeduCJlODm4Eihy-2FPZUSPhiNmHeDumxhxxoRUlNL744-3D' style='text-decoration:none' target='_blank' data-saferedirecturl='https://www.google.com/url?hl=it&amp;q=http://mail.magento.com/wf/click?upn%3DKOJzixp5uSEAZuqcF59y1CT8PwoBV2wT5-2B093BameAmZY8YtEfQXsbNNFQom1imV_gJ5ORFI-2BLCaunNoeQsLPaWHt1cio8iG51tRLS-2FGjyH9O1JAd8nWFz5U6KrtwoktoI2FOqq7FPb1c02ruJScJI-2F12SZWX0jPieMnPsyJdAhK2UZQkPj7H-2FT5cWgI6UYVb-2Bwl8rWDRzQ-2FWjT05dpjm5EyJeU40UEJJMTdl0Lscss7roNcwGzCkQI5DNNwdkrzPpeduCJlODm4Eihy-2FPZUSPhiNmHeDumxhxxoRUlNL744-3D&amp;source=gmail&amp;ust=1492954961054000&amp;usg=AFQjCNFME_rM1GnisKOtQ8foOraYGje4Cw'><img src='http://magento.maddaai.it/pub/media/logo/stores/1/maddaai-logo.png' width='150' alt='Magento Marketplace' border='0' class='CToWUd'></a></td>
-                                    <td width='20' style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='20' height='1' border='0' style='display:block' class='CToWUd'></td>
+                                    <td width='20' style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='20' height='1' border='0' style='display:block' class='CToWUd'></td>
                                  </tr>
                                  <tr>
-                                    <td colspan='3' style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='1' height='20' border='0' style='display:block' class='CToWUd'></td>
+                                    <td colspan='3' style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='1' height='20' border='0' style='display:block' class='CToWUd'></td>
                                  </tr>
                               </tbody>
                            </table>
@@ -422,21 +421,21 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
                            <table class='m_-4013470537037416767pad_null' cellspacing='0' cellpadding='0' width='100%' style='font-family:verdana,arial!important;border-collapse:collapse'>
                               <tbody>
                                  <tr>
-                                    <td colspan='3' style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='1' height='40' border='0' style='display:block' class='CToWUd'></td>
+                                    <td colspan='3' style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='1' height='40' border='0' style='display:block' class='CToWUd'></td>
                                  </tr>
                                  <tr>
-                                    <td width='20' style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='20' height='1' border='0' style='display:block' class='CToWUd'></td>
+                                    <td width='20' style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='20' height='1' border='0' style='display:block' class='CToWUd'></td>
                                     <td style='font-family:verdana,arial!important'>
                                        <table class='m_-4013470537037416767pad_null' cellspacing='0' cellpadding='0' width='100%' style='font-family:verdana,arial!important;border-collapse:collapse'>
                                           <tbody>
                                              <tr>
                                                 <td valign='top' align='center' style='font-family:verdana,arial!important;text-align:center'>
-                                                   <div style='font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-size:17px;line-height:36px;margin:0px;padding:0px;margin-top:-70px'>Ciao ".$nome.' '.$cognome.",</div>
+                                                   <div style='font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-size:17px;line-height:36px;margin:0px;padding:0px;margin-top:-70px'>Ciao " . $nome . ' ' . $cognome . ",</div>
                                                 </td>
                                              </tr>
                                              <tr>
                                                 <td valign='top' align='center' style='font-family:verdana,arial!important;text-align:center'>
-                                                   <div style='font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-size:24px;line-height:24px;margin:0px;padding:0px'>".$mess."</div>
+                                                   <div style='font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-size:24px;line-height:24px;margin:0px;padding:0px'>" . $mess . "</div>
                                                 </td>
                                              </tr>
                                              <tr>
@@ -444,11 +443,11 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
                                              </tr>
                                              <tr>
                                                 <td valign='top' align='center' style='font-family:verdana,arial!important;text-align:center'>
-                                                   <div style='font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-size:15px;line-height:20px;margin:0px;padding:0px'><span style='".$display."; color:rgb(152,152,152);font-size:15px;line-height:20px;margin:0px;padding:0px;font-family:Arial,helvetica,sans-serif'>GDA #:</span><span style='".$display."' class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span>".$id_preorder." &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='m_-4013470537037416767Apple-converted-space' style='".$display."'>&nbsp;</span><span style='color:rgb(152,152,152);font-size:15px;line-height:20px;margin:0px;padding:0px;font-family:Arial,helvetica,sans-serif'>Data:</span><span class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span>".$data."</div>
+                                                   <div style='font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-size:15px;line-height:20px;margin:0px;padding:0px'><span style='" . $display . "; color:rgb(152,152,152);font-size:15px;line-height:20px;margin:0px;padding:0px;font-family:Arial,helvetica,sans-serif'>GDA #:</span><span style='" . $display . "' class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span>" . $id_preorder . " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='m_-4013470537037416767Apple-converted-space' style='" . $display . "'>&nbsp;</span><span style='color:rgb(152,152,152);font-size:15px;line-height:20px;margin:0px;padding:0px;font-family:Arial,helvetica,sans-serif'>Data:</span><span class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span>" . $data . "</div>
                                                 </td>
                                              </tr>
                                              <tr>
-                                                <td style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='1' height='30' border='0' style='display:block' class='CToWUd'></td>
+                                                <td style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='1' height='30' border='0' style='display:block' class='CToWUd'></td>
                                              </tr>
                                              <tr>
                                                 <td valign='top' style='font-family:verdana,arial!important'>
@@ -460,7 +459,7 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
                                                                <table class='m_-4013470537037416767pad_null' cellspacing='0' cellpadding='0' width='550' style='font-family:verdana,arial!important;border-collapse:collapse'>
                                                                   <tbody>
                                                                      <tr>
-                                                                        <td style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='1' height='30' border='0' style='display:block' class='CToWUd'></td>
+                                                                        <td style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='1' height='30' border='0' style='display:block' class='CToWUd'></td>
                                                                      </tr>
                                                                      <tr>
                                                                         <td valign='top' style='font-family:verdana,arial!important'>
@@ -479,27 +478,27 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
                                                                                        <table class='m_-4013470537037416767pad_null' cellspacing='0' cellpadding='0' width='100%' style='font-family:verdana,arial!important;border-collapse:collapse'>
                                                                                           <tbody>
                                                                                              <tr>
-                                                                                                <td colspan='2' style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='1' height='30' border='0' style='display:block' class='CToWUd'></td>
+                                                                                                <td colspan='2' style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='1' height='30' border='0' style='display:block' class='CToWUd'></td>
                                                                                              </tr>
                                                                                              <tr>
                                                                                                 <td align='left' width='160' valign='top' style='font-family:verdana,arial!important;text-align:left;width:160px'><a href='' target='_blank'>
-                                                                                                <img src='".$img."' alt='' width='148' border='0' style='display:block' class='CToWUd'></a></td>
+                                                                                                <img src='" . $img . "' alt='' width='148' border='0' style='display:block' class='CToWUd'></a></td>
                                                                                                 <td style='font-family:verdana,arial!important'>
                                                                                                    <table class='m_-4013470537037416767pad_null' cellspacing='0' cellpadding='0' width='100%' style='font-family:verdana,arial!important;border-collapse:collapse'>
                                                                                                       <tbody>
                                                                                                          <tr>
                                                                                                             <td valign='top' style='font-family:verdana,arial!important'>
-                                                                                                               <p style='font-family:Arial,helvetica,sans-serif;color:rgb(95,95,95);font-size:14px;font-weight:bolder'>".$nome_prodotto."</p>
-                                                                                                               <p style='display:none; font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-weight:normal;font-size:14px;line-height:24px'>".$short_description."</p>
+                                                                                                               <p style='font-family:Arial,helvetica,sans-serif;color:rgb(95,95,95);font-size:14px;font-weight:bolder'>" . $nome_prodotto . "</p>
+                                                                                                               <p style='display:none; font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-weight:normal;font-size:14px;line-height:24px'>" . $short_description . "</p>
                                                                                                                <p style='display:none; font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-weight:normal;font-size:14px;line-height:24px'><span style='color:rgb(150,150,150);font-family:Arial,helvetica,sans-serif;font-weight:normal;font-size:14px;line-height:24px'>Component name:</span><span class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span>aheadworks/module-<wbr>rbslider</p>
                                                                                                                <p style='display:none; font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-weight:normal;font-size:14px;line-height:24px'><span style='color:rgb(150,150,150);font-family:Arial,helvetica,sans-serif;font-weight:normal;font-size:14px;line-height:24px'>Component version:</span><span class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span>1.1.1</p>
                                                                                                                <p style='display:none; font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-weight:normal;font-size:14px;line-height:24px'><span style='color:rgb(150,150,150);font-family:Arial,helvetica,sans-serif;font-weight:normal;font-size:14px;line-height:24px'>Developer:</span><span class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span>Aheadworks</p>
                                                                                                                <p style='display:none; font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-weight:normal;font-size:14px;line-height:24px'><span style='color:rgb(150,150,150);font-family:Arial,helvetica,sans-serif;font-weight:normal;font-size:14px;line-height:24px'>Platform:</span><span class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span>Magento 2 Community Edition</p>
                                                                                                             </td>
-                                                                                                            <td valign='top' width='100' align='right' style='font-family:verdana,arial!important;text-align:right'><span style='color:rgb(150,150,150);font-family:Arial,helvetica,sans-serif;font-weight:normal;font-size:14px;line-height:24px'>Qty ".$quantita." x<span class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span><span class='m_-4013470537037416767price'>".round($prezzo,2)."&euro;</span></span></td>
+                                                                                                            <td valign='top' width='100' align='right' style='font-family:verdana,arial!important;text-align:right'><span style='color:rgb(150,150,150);font-family:Arial,helvetica,sans-serif;font-weight:normal;font-size:14px;line-height:24px'>Qty " . $quantita . " x<span class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span><span class='m_-4013470537037416767price'>" . round($prezzo, 2) . "&euro;</span></span></td>
                                                                                                          </tr>
                                                                                                          <tr>
-                                                                                                            <td valign='top' colspan='2' align='right' style='font-family:verdana,arial!important;text-align:right'><img src='".$space."' alt='' width='1' height='20' border='0' style='display:block' class='CToWUd'></td>
+                                                                                                            <td valign='top' colspan='2' align='right' style='font-family:verdana,arial!important;text-align:right'><img src='" . $space . "' alt='' width='1' height='20' border='0' style='display:block' class='CToWUd'></td>
                                                                                                          </tr>
                                                                                                          <tr style='display:none'>
                                                                                                             <td valign='top' colspan='2' align='right' style='font-family:verdana,arial!important;text-align:right'><span style='color:rgb(18,18,18);font-family:Arial,helvetica,sans-serif;font-weight:normal;font-size:24px;line-height:24px'><span class='m_-4013470537037416767price'>$0.00</span></span></td>
@@ -519,14 +518,14 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
                                                                                     <td colspan='2' style='font-family:verdana,arial!important'><img src='https://ci5.googleusercontent.com/proxy/T5pxbfRwhxiWmT_RCeYdM4Nv3gCf8s8bd4OvuthUQgty88sad-mW8R0CAKINgcPZ-HMMapC_pWKp3IvTqjiC2nKNTTAgNqAojNDpR2pNLtv5pqIsl-mQI8TzReH1ehSF1lmcTu4f3Cqq29ycSr73TIO_ngcuCg=s0-d-e1-ft#https://marketplace.magento.com/skin/frontend/rwd/developer_portal/images/emails/blank_email.gif' alt='' width='1' height='30' border='0' style='display:block' class='CToWUd'></td>
                                                                                  </tr>
                                                                                  <tr style='text-align:right'>
-                                                                                    <td valign='top' colspan='2' align='right' style='font-family:verdana,arial!important;text-align:right'><span style='color:rgb(18,18,18);font-family:Arial,helvetica,sans-serif;font-weight:normal;font-size:24px;line-height:24px;text-transform:uppercase'>TOTALE:<span class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span><span class='m_-4013470537037416767price'>".$quantita*round($prezzo,2)."&euro;</span></span></td>
+                                                                                    <td valign='top' colspan='2' align='right' style='font-family:verdana,arial!important;text-align:right'><span style='color:rgb(18,18,18);font-family:Arial,helvetica,sans-serif;font-weight:normal;font-size:24px;line-height:24px;text-transform:uppercase'>TOTALE:<span class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span><span class='m_-4013470537037416767price'>" . $quantita * round($prezzo, 2) . "&euro;</span></span></td>
                                                                                  </tr>
                                                                                  <tr style='border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:rgb(204,204,204)'>
                                                                                     <td colspan='2' style='font-family:verdana,arial!important'><img src='https://ci5.googleusercontent.com/proxy/T5pxbfRwhxiWmT_RCeYdM4Nv3gCf8s8bd4OvuthUQgty88sad-mW8R0CAKINgcPZ-HMMapC_pWKp3IvTqjiC2nKNTTAgNqAojNDpR2pNLtv5pqIsl-mQI8TzReH1ehSF1lmcTu4f3Cqq29ycSr73TIO_ngcuCg=s0-d-e1-ft#https://marketplace.magento.com/skin/frontend/rwd/developer_portal/images/emails/blank_email.gif' alt='' width='1' height='30' border='0' style='display:block' class='CToWUd'></td>
                                                                                  </tr>
-                                                                                 <tr style='".$display."'>
+                                                                                 <tr style='" . $display . "'>
 
-																				                                                                                   <td valign='top' colspan='2' align='right' style='font-family:verdana,arial!important;text-align:center'><span style='color:rgb(18,18,18);font-family:Arial,helvetica,sans-serif;font-weight:normal;font-size:15px;line-height:24px;'><a style='text-decoration:none;color:rgb(13,150,197);' href='".$base_url."preorder/confirmcheckout/confirm?t=".$token."'>clicca qui per procedere al preorder</a></span></td>
+																				                                                                                   <td valign='top' colspan='2' align='right' style='font-family:verdana,arial!important;text-align:center'><span style='color:rgb(18,18,18);font-family:Arial,helvetica,sans-serif;font-weight:normal;font-size:15px;line-height:24px;'><a style='text-decoration:none;color:rgb(13,150,197);' href='" . $base_url . "preorder/confirmcheckout/confirm?t=" . $token . "'>clicca qui per procedere al preorder</a></span></td>
 
 
 
@@ -681,7 +680,8 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
 </div>";
     }
 
-
-
+    public function isUserLogged(){
+        return $this->_session->isLoggedIn();
+    }
 
 }

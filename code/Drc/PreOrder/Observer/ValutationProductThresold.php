@@ -1,108 +1,112 @@
 <?php
 
-	namespace Drc\PreOrder\Observer;
-	
-	use \Magento\Framework\Event\ObserverInterface;
-	class ValutationProductThresold implements ObserverInterface {
-		
-		protected $productRepository;
-		protected $imageFactory;
+namespace Drc\PreOrder\Observer;
 
-		public function __construct(
-					\Magento\Backend\Block\Template\Context $context,
-					\Magento\Catalog\Model\ProductRepository $productRepository,	
-					\Magento\User\Model\ResourceModel\User\CollectionFactory $userCollectionFactory,
-					\Magento\Catalog\Helper\ImageFactory $imageFactory
-					) {
-			$this->_context = $context;
-			$this->productRepository = $productRepository;
-			$this->imageFactory = $imageFactory;
-			$this->userCollectionFactory = $userCollectionFactory;
-		}
+use \Magento\Framework\Event\ObserverInterface;
 
+class ValutationProductThresold implements ObserverInterface
+{
 
-		
-		public function execute(\Magento\Framework\Event\Observer $observer) {
-			$product_id = $observer->getData('product_id');
-			$base_url = $this->_context->getStoreManager()->getStore()->getBaseUrl();
-			//recupero le email degli admin
-			$userCollection = $this->userCollectionFactory->create();
-			$temp = array();
-			//itero sugli utenti filtrando il ruolo
-			foreach($userCollection as $user) {
-				$temp[] = $user->getEmail();	
-			}
-			$ret = $this->send($temp, $base_url, $product_id);
+    protected $productRepository;
+    protected $imageFactory;
 
-	
-		}
-		
-	
-		//function to send notification mail
-		//credits to PaoloVox :)	
-		public function send($emails,$base_url,$id_prodotto) {
-			//getting product id from event
-			//Initialize needed variables
-		        $your_name = 'MADDAAI STORE';
-        		$your_email = 'maddaai.store@gmail.com';
-         		$your_password = 'danieledaniele';
-
-         		//SMTP server configuration
-         		$smtpHost = 'smtp.gmail.com';
-         		$smtpConf = array(
-          			'auth' => 'login',
-          			'ssl' => 'ssl',
-          			'port' => '465',
-          			'username' => $your_email,
-          			'password' => $your_password
-         		);
-         		$transport = new \Zend_Mail_Transport_Smtp($smtpHost, $smtpConf);
+    public function __construct(
+        \Magento\Backend\Block\Template\Context $context,
+        \Magento\Catalog\Model\ProductRepository $productRepository,
+        \Magento\User\Model\ResourceModel\User\CollectionFactory $userCollectionFactory,
+        \Magento\Catalog\Helper\ImageFactory $imageFactory
+    )
+    {
+        $this->_context = $context;
+        $this->productRepository = $productRepository;
+        $this->imageFactory = $imageFactory;
+        $this->userCollectionFactory = $userCollectionFactory;
+    }
 
 
-			//getting product info
-			
-			$prodotto = $this->productRepository->getById($id_prodotto);
-			$url_image = $this->imageFactory->create()->init($prodotto, 'product_base_image')->getUrl();
-     			$nome_prodotto = $prodotto->getName();
-     			$prezzo =  $prodotto->getPrice();
-     			$short_description = $prodotto->getShortDescription();
+    public function execute(\Magento\Framework\Event\Observer $observer)
+    {
+        $product_id = $observer->getData('product_id');
+        $base_url = $this->_context->getStoreManager()->getStore()->getBaseUrl();
+        //recupero le email degli admin
+        $userCollection = $this->userCollectionFactory->create();
+        $temp = array();
+        //itero sugli utenti filtrando il ruolo
+        foreach ($userCollection as $user) {
+            $temp[] = $user->getEmail();
+        }
+        $ret = $this->send($temp, $base_url, $product_id);
 
-			//Create email
-			$body = $this->getBody($url_image,$nome_prodotto,$prezzo,$short_description,$base_url);
-		        $mail = new \Zend_Mail();
-         		$mail->setFrom($your_email, $your_name);
-			foreach($emails as $email) {
-         			$mail->addTo($email);
-			}
-         		$mail->setSubject("Notifica Raggiungimento Quota di Like");
-         		$mail->setBodyHtml($body);
 
-         		//Send
-         		$sent = true;
-         		try {
-          			$mail->send($transport);
-         		}
-         		catch (Exception $e) {
-          			$sent = false;
-                         	Zend_Debug::dump("errore email");
-         		}
-         		\Zend_Debug::dump("email mandata con successo");
-         		//Return boolean indicating success or failure
-        		return $sent;
-		}
-		
-		public function getBody($img,$nome_prodotto,$prezzo,$short_description,$base_url){
+    }
 
-      $space = "https://ci6.googleusercontent.com/proxy/K9UD7F7-BWO0aVw6xoSNz6TiDMctwkLffAggfmqRkObNkiRZxnZ25ryzdyAngQ5EPh_jT54VaJoLR7ydgNY7_M9V_iAKTrK1P5EjyGI9C6YZQMS2gxaJsEZYVVvTNml0mLcxkx_2WBT5GsQzWwq4YTkgjHc=s0-d-e1-ft#https://developer.magento.com/skin/frontend/rwd/developer_portal/images/emails/blank_email.gif";
-	  $mess =  "Il seguente prodotto ha raggiunto il limite di like";
-      $display =  "";
 
-      $data = date('d/m/Y'); //date('d/m/Y H:i:s')
-      return "<div style='font-size:12px;font-style:normal;font-variant-caps:normal;font-weight:normal;letter-spacing:normal;text-align:start;text-indent:0px;text-transform:none;white-space:normal;word-spacing:0px;background-color:rgb(246,246,246);font-family:Verdana,Arial,Helvetica,sans-serif;margin:0px;padding:0px'>
+    //function to send notification mail
+    //credits to PaoloVox :)
+    public function send($emails, $base_url, $id_prodotto)
+    {
+        //getting product id from event
+        //Initialize needed variables
+        $your_name = 'MADDAAI STORE';
+        $your_email = 'maddaai.store@gmail.com';
+        $your_password = 'danieledaniele';
+
+        //SMTP server configuration
+        $smtpHost = 'smtp.gmail.com';
+        $smtpConf = array(
+            'auth' => 'login',
+            'ssl' => 'ssl',
+            'port' => '465',
+            'username' => $your_email,
+            'password' => $your_password
+        );
+        $transport = new \Zend_Mail_Transport_Smtp($smtpHost, $smtpConf);
+
+
+        //getting product info
+
+        $prodotto = $this->productRepository->getById($id_prodotto);
+        $url_image = $this->imageFactory->create()->init($prodotto, 'product_base_image')->getUrl();
+        $nome_prodotto = $prodotto->getName();
+        $prezzo = $prodotto->getPrice();
+        $short_description = $prodotto->getShortDescription();
+
+        //Create email
+        $body = $this->getBody($url_image, $nome_prodotto, $prezzo, $short_description, $base_url);
+        $mail = new \Zend_Mail();
+        $mail->setFrom($your_email, $your_name);
+        foreach ($emails as $email) {
+            $mail->addTo($email);
+        }
+        $mail->setSubject("Notifica Raggiungimento Quota di Like");
+        $mail->setBodyHtml($body);
+
+        //Send
+        $sent = true;
+        try {
+            $mail->send($transport);
+        } catch (Exception $e) {
+            $sent = false;
+            Zend_Debug::dump("errore email");
+        }
+        \Zend_Debug::dump("email mandata con successo");
+        //Return boolean indicating success or failure
+        return $sent;
+    }
+
+    public function getBody($img, $nome_prodotto, $prezzo, $short_description, $base_url)
+    {
+
+        $space = "https://ci6.googleusercontent.com/proxy/K9UD7F7-BWO0aVw6xoSNz6TiDMctwkLffAggfmqRkObNkiRZxnZ25ryzdyAngQ5EPh_jT54VaJoLR7ydgNY7_M9V_iAKTrK1P5EjyGI9C6YZQMS2gxaJsEZYVVvTNml0mLcxkx_2WBT5GsQzWwq4YTkgjHc=s0-d-e1-ft#https://developer.magento.com/skin/frontend/rwd/developer_portal/images/emails/blank_email.gif";
+        $mess = "Il seguente prodotto ha raggiunto il limite di like";
+        $display = "";
+
+        $data = date('d/m/Y'); //date('d/m/Y H:i:s')
+        return "<div style='font-size:12px;font-style:normal;font-variant-caps:normal;font-weight:normal;letter-spacing:normal;text-align:start;text-indent:0px;text-transform:none;white-space:normal;word-spacing:0px;background-color:rgb(246,246,246);font-family:Verdana,Arial,Helvetica,sans-serif;margin:0px;padding:0px'>
    <table class='m_-4013470537037416767pad_null' cellspacing='0' cellpadding='0' border='0' height='100%' width='100%' style='font-family:verdana,arial!important'>
       <tbody>
          <tr>
-            <td style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='1' height='10' border='0' style='display:block' class='CToWUd'></td>
+            <td style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='1' height='10' border='0' style='display:block' class='CToWUd'></td>
          </tr>
          <tr>
             <td align='center' valign='top' style='font-family:verdana,arial!important;padding:0px'>
@@ -113,15 +117,15 @@
                            <table class='m_-4013470537037416767pad_null' cellspacing='0' cellpadding='0' width='100%' bgcolor='#ffffff' style='font-family:verdana,arial!important;border-collapse:collapse'>
                               <tbody>
                                  <tr>
-                                    <td colspan='3' style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='1' height='20' border='0' style='display:block' class='CToWUd'></td>
+                                    <td colspan='3' style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='1' height='20' border='0' style='display:block' class='CToWUd'></td>
                                  </tr>
                                  <tr>
-                                    <td width='20' style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='20' height='1' border='0' style='display:block' class='CToWUd'></td>
+                                    <td width='20' style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='20' height='1' border='0' style='display:block' class='CToWUd'></td>
                                     <td style='font-family:verdana,arial!important'><a href='http://mail.magento.com/wf/click?upn=KOJzixp5uSEAZuqcF59y1CT8PwoBV2wT5-2B093BameAmZY8YtEfQXsbNNFQom1imV_gJ5ORFI-2BLCaunNoeQsLPaWHt1cio8iG51tRLS-2FGjyH9O1JAd8nWFz5U6KrtwoktoI2FOqq7FPb1c02ruJScJI-2F12SZWX0jPieMnPsyJdAhK2UZQkPj7H-2FT5cWgI6UYVb-2Bwl8rWDRzQ-2FWjT05dpjm5EyJeU40UEJJMTdl0Lscss7roNcwGzCkQI5DNNwdkrzPpeduCJlODm4Eihy-2FPZUSPhiNmHeDumxhxxoRUlNL744-3D' style='text-decoration:none' target='_blank' data-saferedirecturl='https://www.google.com/url?hl=it&amp;q=http://mail.magento.com/wf/click?upn%3DKOJzixp5uSEAZuqcF59y1CT8PwoBV2wT5-2B093BameAmZY8YtEfQXsbNNFQom1imV_gJ5ORFI-2BLCaunNoeQsLPaWHt1cio8iG51tRLS-2FGjyH9O1JAd8nWFz5U6KrtwoktoI2FOqq7FPb1c02ruJScJI-2F12SZWX0jPieMnPsyJdAhK2UZQkPj7H-2FT5cWgI6UYVb-2Bwl8rWDRzQ-2FWjT05dpjm5EyJeU40UEJJMTdl0Lscss7roNcwGzCkQI5DNNwdkrzPpeduCJlODm4Eihy-2FPZUSPhiNmHeDumxhxxoRUlNL744-3D&amp;source=gmail&amp;ust=1492954961054000&amp;usg=AFQjCNFME_rM1GnisKOtQ8foOraYGje4Cw'><img src='http://magento.maddaai.it/pub/media/logo/stores/1/maddaai-logo.png' width='150' alt='Magento Marketplace' border='0' class='CToWUd'></a></td>
-                                    <td width='20' style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='20' height='1' border='0' style='display:block' class='CToWUd'></td>
+                                    <td width='20' style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='20' height='1' border='0' style='display:block' class='CToWUd'></td>
                                  </tr>
                                  <tr>
-                                    <td colspan='3' style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='1' height='20' border='0' style='display:block' class='CToWUd'></td>
+                                    <td colspan='3' style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='1' height='20' border='0' style='display:block' class='CToWUd'></td>
                                  </tr>
                               </tbody>
                            </table>
@@ -132,10 +136,10 @@
                            <table class='m_-4013470537037416767pad_null' cellspacing='0' cellpadding='0' width='100%' style='font-family:verdana,arial!important;border-collapse:collapse'>
                               <tbody>
                                  <tr>
-                                    <td colspan='3' style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='1' height='40' border='0' style='display:block' class='CToWUd'></td>
+                                    <td colspan='3' style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='1' height='40' border='0' style='display:block' class='CToWUd'></td>
                                  </tr>
                                  <tr>
-                                    <td width='20' style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='20' height='1' border='0' style='display:block' class='CToWUd'></td>
+                                    <td width='20' style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='20' height='1' border='0' style='display:block' class='CToWUd'></td>
                                     <td style='font-family:verdana,arial!important'>
                                        <table class='m_-4013470537037416767pad_null' cellspacing='0' cellpadding='0' width='100%' style='font-family:verdana,arial!important;border-collapse:collapse'>
                                           <tbody>
@@ -146,7 +150,7 @@
                                              </tr>
                                              <tr>
                                                 <td valign='top' align='center' style='font-family:verdana,arial!important;text-align:center'>
-                                                   <div style='font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-size:24px;line-height:24px;margin:0px;padding:0px'>".$mess."</div>
+                                                   <div style='font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-size:24px;line-height:24px;margin:0px;padding:0px'>" . $mess . "</div>
                                                 </td>
                                              </tr>
                                              <tr>
@@ -154,11 +158,11 @@
                                              </tr>
                                              <tr>
                                                 <td valign='top' align='center' style='font-family:verdana,arial!important;text-align:center'>
-                                                   <div style='font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-size:15px;line-height:20px;margin:0px;padding:0px'><span style='".$display."; color:rgb(152,152,152);font-size:15px;line-height:20px;margin:0px;padding:0px;font-family:Arial,helvetica,sans-serif'></span><span style='".$display."' class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='m_-4013470537037416767Apple-converted-space' style='".$display."'>&nbsp;</span><span style='color:rgb(152,152,152);font-size:15px;line-height:20px;margin:0px;padding:0px;font-family:Arial,helvetica,sans-serif'>Data:</span><span class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span>".$data."</div>
+                                                   <div style='font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-size:15px;line-height:20px;margin:0px;padding:0px'><span style='" . $display . "; color:rgb(152,152,152);font-size:15px;line-height:20px;margin:0px;padding:0px;font-family:Arial,helvetica,sans-serif'></span><span style='" . $display . "' class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='m_-4013470537037416767Apple-converted-space' style='" . $display . "'>&nbsp;</span><span style='color:rgb(152,152,152);font-size:15px;line-height:20px;margin:0px;padding:0px;font-family:Arial,helvetica,sans-serif'>Data:</span><span class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span>" . $data . "</div>
                                                 </td>
                                              </tr>
                                              <tr>
-                                                <td style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='1' height='30' border='0' style='display:block' class='CToWUd'></td>
+                                                <td style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='1' height='30' border='0' style='display:block' class='CToWUd'></td>
                                              </tr>
                                              <tr>
                                                 <td valign='top' style='font-family:verdana,arial!important'>
@@ -170,7 +174,7 @@
                                                                <table class='m_-4013470537037416767pad_null' cellspacing='0' cellpadding='0' width='550' style='font-family:verdana,arial!important;border-collapse:collapse'>
                                                                   <tbody>
                                                                      <tr>
-                                                                        <td style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='1' height='30' border='0' style='display:block' class='CToWUd'></td>
+                                                                        <td style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='1' height='30' border='0' style='display:block' class='CToWUd'></td>
                                                                      </tr>
                                                                      <tr>
                                                                         <td valign='top' style='font-family:verdana,arial!important'>
@@ -189,18 +193,18 @@
                                                                                        <table class='m_-4013470537037416767pad_null' cellspacing='0' cellpadding='0' width='100%' style='font-family:verdana,arial!important;border-collapse:collapse'>
                                                                                           <tbody>
                                                                                              <tr>
-                                                                                                <td colspan='2' style='font-family:verdana,arial!important'><img src='".$space."' alt='' width='1' height='30' border='0' style='display:block' class='CToWUd'></td>
+                                                                                                <td colspan='2' style='font-family:verdana,arial!important'><img src='" . $space . "' alt='' width='1' height='30' border='0' style='display:block' class='CToWUd'></td>
                                                                                              </tr>
                                                                                              <tr>
                                                                                                 <td align='left' width='160' valign='top' style='font-family:verdana,arial!important;text-align:left;width:160px'><a href='' target='_blank'>
-                                                                                                <img src='".$img."' alt='' width='148' border='0' style='display:block' class='CToWUd'></a></td>
+                                                                                                <img src='" . $img . "' alt='' width='148' border='0' style='display:block' class='CToWUd'></a></td>
                                                                                                 <td style='font-family:verdana,arial!important'>
                                                                                                    <table class='m_-4013470537037416767pad_null' cellspacing='0' cellpadding='0' width='100%' style='font-family:verdana,arial!important;border-collapse:collapse'>
                                                                                                       <tbody>
                                                                                                          <tr>
                                                                                                             <td valign='top' style='font-family:verdana,arial!important'>
-                                                                                                               <p style='font-family:Arial,helvetica,sans-serif;color:rgb(95,95,95);font-size:14px;font-weight:bolder'>".$nome_prodotto."</p>
-                                                                                                               <p style='display:none; font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-weight:normal;font-size:14px;line-height:24px'>".$short_description."</p>
+                                                                                                               <p style='font-family:Arial,helvetica,sans-serif;color:rgb(95,95,95);font-size:14px;font-weight:bolder'>" . $nome_prodotto . "</p>
+                                                                                                               <p style='display:none; font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-weight:normal;font-size:14px;line-height:24px'>" . $short_description . "</p>
                                                                                                                <p style='display:none; font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-weight:normal;font-size:14px;line-height:24px'><span style='color:rgb(150,150,150);font-family:Arial,helvetica,sans-serif;font-weight:normal;font-size:14px;line-height:24px'>Component name:</span><span class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span>aheadworks/module-<wbr>rbslider</p>
                                                                                                                <p style='display:none; font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-weight:normal;font-size:14px;line-height:24px'><span style='color:rgb(150,150,150);font-family:Arial,helvetica,sans-serif;font-weight:normal;font-size:14px;line-height:24px'>Component version:</span><span class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span>1.1.1</p>
                                                                                                                <p style='display:none; font-family:Arial,helvetica,sans-serif;color:rgb(18,18,18);font-weight:normal;font-size:14px;line-height:24px'><span style='color:rgb(150,150,150);font-family:Arial,helvetica,sans-serif;font-weight:normal;font-size:14px;line-height:24px'>Developer:</span><span class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span>Aheadworks</p>
@@ -209,7 +213,7 @@
                                                                                                             <td valign='top' width='100' align='right' style='font-family:verdana,arial!important;text-align:right'><span style='color:rgb(150,150,150);font-family:Arial,helvetica,sans-serif;font-weight:normal;font-size:14px;line-height:24px'> x<span class='m_-4013470537037416767Apple-converted-space'>&nbsp;</span><span class='m_-4013470537037416767price'></span></span></td>
                                                                                                          </tr>
                                                                                                          <tr>
-                                                                                                            <td valign='top' colspan='2' align='right' style='font-family:verdana,arial!important;text-align:right'><img src='".$space."' alt='' width='1' height='20' border='0' style='display:block' class='CToWUd'></td>
+                                                                                                            <td valign='top' colspan='2' align='right' style='font-family:verdana,arial!important;text-align:right'><img src='" . $space . "' alt='' width='1' height='20' border='0' style='display:block' class='CToWUd'></td>
                                                                                                          </tr>
                                                                                                          <tr style='display:none'>
                                                                                                             <td valign='top' colspan='2' align='right' style='font-family:verdana,arial!important;text-align:right'><span style='color:rgb(18,18,18);font-family:Arial,helvetica,sans-serif;font-weight:normal;font-size:24px;line-height:24px'><span class='m_-4013470537037416767price'>$0.00</span></span></td>
@@ -232,7 +236,7 @@
                                                                                  <tr style='border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:rgb(204,204,204)'>
                                                                                     <td colspan='2' style='font-family:verdana,arial!important'><img src='https://ci5.googleusercontent.com/proxy/T5pxbfRwhxiWmT_RCeYdM4Nv3gCf8s8bd4OvuthUQgty88sad-mW8R0CAKINgcPZ-HMMapC_pWKp3IvTqjiC2nKNTTAgNqAojNDpR2pNLtv5pqIsl-mQI8TzReH1ehSF1lmcTu4f3Cqq29ycSr73TIO_ngcuCg=s0-d-e1-ft#https://marketplace.magento.com/skin/frontend/rwd/developer_portal/images/emails/blank_email.gif' alt='' width='1' height='30' border='0' style='display:block' class='CToWUd'></td>
                                                                                  </tr>
-                                                                                 <tr style='".$display."'>
+                                                                                 <tr style='" . $display . "'>
                                                                                     <td colspan='2' style='font-family:verdana,arial!important'><img src='https://ci5.googleusercontent.com/proxy/T5pxbfRwhxiWmT_RCeYdM4Nv3gCf8s8bd4OvuthUQgty88sad-mW8R0CAKINgcPZ-HMMapC_pWKp3IvTqjiC2nKNTTAgNqAojNDpR2pNLtv5pqIsl-mQI8TzReH1ehSF1lmcTu4f3Cqq29ycSr73TIO_ngcuCg=s0-d-e1-ft#https://marketplace.magento.com/skin/frontend/rwd/developer_portal/images/emails/blank_email.gif' alt='' width='1' height='30' border='0' style='display:block' class='CToWUd'></td>
                                                                                  </tr>
                                                                               </tbody>
@@ -382,8 +386,8 @@
       </tbody>
    </table>
 </div>";
-    }	
-			
-	}
+    }
+
+}
 
 

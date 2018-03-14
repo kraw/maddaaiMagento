@@ -66,8 +66,8 @@ class OrderSender extends \Magento\Sales\Model\Order\Email\Sender\OrderSender
         if ($flag) {
             if (isset($emailId)) {
                 $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
-                $scopeConfig=$objectManager->create('Magento\Framework\App\Config\ScopeConfigInterface');
-                $customer_email_template =$scopeConfig->getValue('drc_preorder_setting/preorderorderemail/preordertemplate', $storeScope, $storeId);
+                $scopeConfig = $objectManager->create('Magento\Framework\App\Config\ScopeConfigInterface');
+                $customer_email_template = $scopeConfig->getValue('drc_preorder_setting/preorderorderemail/preordertemplate', $storeScope, $storeId);
                 $senderEmail = $scopeConfig->getValue("sales_email/order/identity", $storeScope, $storeId);
                 $email = $scopeConfig->getValue('trans_email/ident_'.$senderEmail.'/email', $storeScope, $storeId);
                 $name  = $scopeConfig->getValue('trans_email/ident_'.$senderEmail.'/name', $storeScope, $storeId);
