@@ -36,6 +36,11 @@ class Topmenu
         return $collection;
     }
 
+    public function isUserLogged(){
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        return $objectManager->get('Magento\Customer\Model\Session')->isLoggedIn();
+    }
+
     public function afterGetHtml(\Magento\Theme\Block\Html\Topmenu $topmenu, $html){
 
         $html .= "<li class=\"level0 nav-6 level-top\">";
@@ -71,14 +76,25 @@ class Topmenu
             "<span  title=\"Gruppo di acquisti\">" . __("GDA proposte") . "</span>" .
             "</a>";
         $html .= "</li>";
-        $html .= "<li class=\"level0 nav-6 level-top\" style=\"float:right\">".
-            "<a class=\"level-top\" href=\"/customer/account/\"><span>". __("Il mio account") ."</span>".
-            "</a>";
-        $html .= "<ul class=\"level1 submenu\" >";
-        $html .= "<li class=\"level2 nav-3-1-2\"><a href=\"/index.php/preorder/gda/index/\">" . __("I miei GDA") . "</a></li>";
-        $html .= "<li class=\"level2 nav-3-1-2\"><a href=\"/customer/account/logout/\">" . __("Esci") . "</a></li>";
-        $html .="</ul>";
-        $html .="</li>";
+
+        if($this->isUserLogged()) {
+            $html .= "<li class=\"level0 nav-6 level-top\" style=\"float:right\">" .
+                "<a class=\"level-top\" href=\"/customer/account/\"><span>" . __("Il mio account") . "</span>" .
+                "</a>";
+            $html .= "<ul class=\"level1 submenu\" >";
+            $html .= "<li class=\"level2 nav-3-1-2\"><a href=\"/index.php/preorder/gda/index/\">" . __("I miei GDA") . "</a></li>";
+            $html .= "<li class=\"level2 nav-3-1-2\"><a href=\"/customer/account/logout/\">" . __("Esci") . "</a></li>";
+            $html .= "</ul>";
+            $html .= "</li>";
+        }
+        else {
+            $html .= "<li class=\"level0 nav-6 level-top\" style=\"float:right\">";
+            $html .= "<a href=\"//www.maddaai.it/login/\" class=\"level-top\" >" .
+                "<span  title=\"Effettua il login\">" . __("Effettua il login") . "</span>" .
+                "</a>";
+            $html .= "</li>";
+        }
+
 
         return $html;
     }
