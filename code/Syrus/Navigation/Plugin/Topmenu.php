@@ -78,15 +78,18 @@ class Topmenu
             "</a>";
         $html .= "</li>";
 
+        $html .= "<li class=\"level0 nav-6 level-top\" style=\"float:right\">" .
+            "<a class=\"level-top\" href=\"/customer/account/\"><span>" . __("Il mio account") . "</span>" .
+            "</a>";
+        $html .= "<ul class=\"level1 submenu\" >";
+        $html .= "<li class=\"level2 nav-3-1-2\"><a href=\"/index.php/preorder/gda/index/\">" . __("I miei GDA") . "</a></li>";
+        $html .= "<li class=\"level2 nav-3-1-2\"><a href=\"/customer/account/logout/\">" . __("Esci") . "</a></li>";
+        $html .= "</ul>";
+        $html .= "</li>";
+
+
        // if($this->isUserLogged()) {
-            $html .= "<li class=\"level0 nav-6 level-top\" style=\"float:right\">" .
-                "<a class=\"level-top\" href=\"/customer/account/\"><span>" . __("Il mio account") . "</span>" .
-                "</a>";
-            $html .= "<ul class=\"level1 submenu\" >";
-            $html .= "<li class=\"level2 nav-3-1-2\"><a href=\"/index.php/preorder/gda/index/\">" . __("I miei GDA") . "</a></li>";
-            $html .= "<li class=\"level2 nav-3-1-2\"><a href=\"/customer/account/logout/\">" . __("Esci") . "</a></li>";
-            $html .= "</ul>";
-            $html .= "</li>";
+
         /*  }
           else {
               $html .= "<li class=\"level0 nav-6 level-top\" style=\"float:right\">";
