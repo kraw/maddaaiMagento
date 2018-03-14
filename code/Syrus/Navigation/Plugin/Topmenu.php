@@ -37,8 +37,9 @@ class Topmenu
     }
 
     public function isUserLogged(){
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        return $objectManager->get('Magento\Customer\Model\Session')->isLoggedIn();
+        $objectManager = ObjectManager::getInstance();
+        $customerSession = $objectManager->get('Magento\Checkout\Helper\Cart')->getCart()->getCustomerSession();
+        return $customerSession->isLoggedIn();
     }
 
     public function afterGetHtml(\Magento\Theme\Block\Html\Topmenu $topmenu, $html){
@@ -77,7 +78,7 @@ class Topmenu
             "</a>";
         $html .= "</li>";
 
-        if($this->isUserLogged()) {
+       // if($this->isUserLogged()) {
             $html .= "<li class=\"level0 nav-6 level-top\" style=\"float:right\">" .
                 "<a class=\"level-top\" href=\"/customer/account/\"><span>" . __("Il mio account") . "</span>" .
                 "</a>";
@@ -86,15 +87,14 @@ class Topmenu
             $html .= "<li class=\"level2 nav-3-1-2\"><a href=\"/customer/account/logout/\">" . __("Esci") . "</a></li>";
             $html .= "</ul>";
             $html .= "</li>";
-        }
-        else {
-            $html .= "<li class=\"level0 nav-6 level-top\" style=\"float:right\">";
-            $html .= "<a href=\"//www.maddaai.it/login/\" class=\"level-top\" >" .
-                "<span  title=\"Effettua il login\">" . __("Effettua il login") . "</span>" .
-                "</a>";
-            $html .= "</li>";
-        }
-
+        /*  }
+          else {
+              $html .= "<li class=\"level0 nav-6 level-top\" style=\"float:right\">";
+              $html .= "<a href=\"//www.maddaai.it/login/\" class=\"level-top\" >" .
+                  "<span  title=\"Effettua il login\">" . __("Effettua il login") . "</span>" .
+                  "</a>";
+              $html .= "</li>";
+          }*/
 
         return $html;
     }
