@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <easynolo_bancasellapro>
+                <active>0</active>
+                <model>EasyNolo\BancaSellaPro\Model\Gestpay</model>
+                <payment_action>authorize_capture</payment_action>
+                <title>Banca Sella GestPay Pro</title>
+                <description>You will be redirected to Banca Sella payment website</description>
+                <language>0</language>
+                <debug>0</debug>
+                <log>0</log>
+                <currency>242</currency>
+                <cctypes>AE,VI,MC,DI,JCB</cctypes>
+                <order_status>pending</order_status>
+                <order_status_ko_user>canceled</order_status_ko_user>
+                <order_status_ko_gestpay>holded</order_status_ko_gestpay>
+                <order_status_ok_gestpay>processing</order_status_ok_gestpay>
+                <order_status_fraud_gestpay>1</order_status_fraud_gestpay>
+                <use_s2s_api>0</use_s2s_api>
+
+                <url_live><![CDATA[https://ecomm.sella.it]]></url_live>
+                <url_live_s2s><![CDATA[https://ecomms2s.sella.it]]></url_live_s2s>
+                <url_test><![CDATA[https://sandbox.gestpay.net]]></url_test>
+                <url_test_s2s><![CDATA[https://sandbox.gestpay.net]]></url_test_s2s>
+            </easynolo_bancasellapro>
+        </payment>
+    </default>
+</config>

@@ -1,0 +1,40 @@
+{
+  "name": "easynolo/module-gestpay-pro",
+  "description": "EasyNolo Banca Sella GestPay Pro",
+  "type": "magento2-module",
+  "require": {
+    "php": ">=5.4.0"
+  },
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "EasyNolo\\BancaSellaPro\\": ""
+    }
+  },
+  "version": "2.1.7",
+  "license": [
+    "GPL"
+  ],
+  "authors": [
+    {
+      "name": "Easy Nolo",
+      "email": "ecommerce@sella.it",
+      "homepage": "http://www.sella.it",
+      "role": "Owner"
+    },
+    {
+      "name": "Triboo Digitale",
+      "email": "info@triboo.it",
+      "homepage": "http://www.triboo.it/",
+      "role": "Software House"
+    },
+    {
+      "name": "Massimo Maino",
+      "email": "massimo.maino@triboo.it",
+      "homepage": "https://github.com/maintux",
+      "role": "Developer"
+    }
+  ]
+}

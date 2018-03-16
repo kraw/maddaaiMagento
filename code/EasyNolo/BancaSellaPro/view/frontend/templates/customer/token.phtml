@@ -1,0 +1,47 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: maintux
+ * Date: 23/02/17
+ * Time: 11:35
+ */
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$tokenCollection = $objectManager->get('Magento\Framework\Registry')->registry('token_collection');
+$helper = $this->helper('EasyNolo\BancaSellaPro\Helper\Data');
+
+if ($tokenCollection && count($tokenCollection)):
+?>
+
+<table class="data table table-order-items history" id="my-saved-cards-table">
+    <thead>
+        <tr>
+            <th scope="col" class="col"><?php echo __('Card #') ?></th>
+            <th scope="col" class="col"><?php echo __('Vendor') ?></th>
+            <th scope="col" class="col"><?php echo __('Number') ?></th>
+            <th scope="col" class="col"><?php echo __('Expiration Date') ?></th>
+            <th scope="col" class="col"><?php echo __('Actions') ?></th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach($tokenCollection as  $token): ?>
+        <tr>
+            <td style="vertical-align: middle;" class="col"><?php echo $token->getId(); ?></td>
+            <td style="vertical-align: middle;" class="col">
+                <?php $_vendor = $helper->getCardVendor($token->getToken()); ?>
+                <span title="<?php echo $_vendor['label']; ?>">
+                    <i style="font-family: PaymentFont;font-style: normal;font-size: 25px;" class="pf-<?php echo $_vendor['id'] ?>"></i>
+                </span>
+            </td>
+            <td style="vertical-align: middle;" class="col"><?php echo $helper->getFormattedToken($token->getToken()); ?></td>
+            <td style="vertical-align: middle;" class="col"><span class="nobr"><?php echo $block->formatDate($token->getExpireAt(), \IntlDateFormatter::LONG); ?></span></td>
+            <td style="vertical-align: middle;" class="col">
+                <?php if(!$token->getProfileId()): ?>
+                    <a href="<?php echo $this->getUrl('bancasellapro/token/delete/', array('_secure' => $this->getRequest()->isSecure(), 'token' => $token->getId())) ?>"><?php echo __('Delete'); ?></a>
+                <?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+<?php endif; ?>

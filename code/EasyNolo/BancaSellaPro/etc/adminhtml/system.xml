@@ -1,0 +1,467 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Created by PhpStorm.
+ * User: maintux
+ * Date: 22/01/17
+ * Time: 09:30
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <group id="easynolo_bancasellapro" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>EasyNolo Banca Sella GestPay Pro</label>
+                <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="payment_action" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Payment Action</label>
+                    <source_model>EasyNolo\BancaSellaPro\Model\Config\Source\PaymentAction</source_model>
+                </field>
+
+                <field id="title" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Title</label>
+                </field>
+                <field id="description" translate="label" type="textarea" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Description</label>
+                </field>
+                <field id="merchant_id" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Shop Login</label>
+                </field>
+                <field id="debug" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Test Environment</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[If enabled please insert a test shop login; so the payments will be send to https://testecomm.sella.it]]>
+                    </comment>
+                </field>
+                <field id="language" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Gateway Language</label>
+                    <source_model>EasyNolo\BancaSellaPro\Model\Config\Source\Language</source_model>
+                    <comment>
+                        <![CDATA[<b>Please note:</b> available only if configured on GestPay backend as well.]]>
+                    </comment>
+                </field>
+                <field id="currency" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Gateway Currency</label>
+                    <source_model>EasyNolo\BancaSellaPro\Model\Config\Source\Currency</source_model>
+                </field>
+                <field id="order_status" translate="label" type="select" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>New Order Status</label>
+                    <source_model>EasyNolo\BancaSellaPro\Model\Config\Source\OrderStatus</source_model>
+                </field>
+                <field id="order_status_ok_gestpay" translate="label" type="select" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Status of order confirmed by Banca Sella</label>
+                    <source_model>EasyNolo\BancaSellaPro\Model\Config\Source\OrderStatus</source_model>
+                </field>
+                <field id="order_status_ko_gestpay" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Status of order canceled by Banca Sella</label>
+                    <source_model>EasyNolo\BancaSellaPro\Model\Config\Source\OrderStatus</source_model>
+                </field>
+                <field id="use_s2s_api" translate="label" type="select" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Use S2S Sales API for Capture, Void, Refund actions</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, this operations will be performed natively through Magento Invoicing system.]]></comment>
+                </field>
+                <field id="iframe" translate="label" type="select" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable iFrame</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[If enabled the payment process will be performed without redirection to the Banca Sella payment website.<br/><b>Please note:</b> available only if configured on GestPay backend as well.]]>
+                    </comment>
+                </field>
+                <field id="tokenization" translate="label" type="select" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Tokenization</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[If enabled Banca Sella, after payments, returns a token can be used for one-click payments.<br/><b>Please note:</b> available only if configured on GestPay backend as well.]]>
+                    </comment>
+                    <depends>
+                        <field id="iframe">1</field>
+                    </depends>
+                </field>
+
+                <field id="use_transactionkey" translate="label" type="select" sortOrder="13" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Transaction Key</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[<b>ATTENTION!</b> Use this option only if explicitly asked by Gestpay team.]]>
+                    </comment>
+                    <depends>
+                        <field id="iframe">1</field>
+                        <field id="tokenization">1</field>
+                    </depends>
+                </field>
+
+                <field id="tk_merchant_id" translate="label" type="text" sortOrder="14" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Shop Login (for tokenization)</label>
+                    <validate>required-entry</validate>
+                    <depends>
+                        <field id="iframe">1</field>
+                        <field id="tokenization">1</field>
+                        <field id="use_transactionkey">1</field>
+                    </depends>
+                </field>
+
+                <field id="tk_site_id" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Site ID</label>
+                    <validate>required-entry</validate>
+                    <depends>
+                        <field id="iframe">1</field>
+                        <field id="tokenization">1</field>
+                        <field id="use_transactionkey">1</field>
+                    </depends>
+                </field>
+
+                <field id="tk_api_key" translate="label" type="text" sortOrder="16" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>API Key</label>
+                    <validate>required-entry</validate>
+                    <depends>
+                        <field id="iframe">1</field>
+                        <field id="tokenization">1</field>
+                        <field id="use_transactionkey">1</field>
+                    </depends>
+                </field>
+
+                <field id="url_live" translate="label" type="text" sortOrder="34" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Live Payment URL</label>
+                </field>
+                <field id="url_live_s2s" translate="label" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Live S2S URL</label>
+                </field>
+                <field id="url_test" translate="label" type="text" sortOrder="36" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Test Payment URL</label>
+                </field>
+                <field id="url_test_s2s" translate="label" type="text" sortOrder="37" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Test S2S URL</label>
+                </field>
+
+                <field id="log" translate="label" type="select" sortOrder="39" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Log</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Logging from Mage::log(). File is located in {{base_dir}}/var/log/<i>EasyNolo_BancaSellaPro.log</i>]]>
+                    </comment>
+                </field>
+            </group>
+
+            <group id="easynolo_bancasellapro_red" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>EasyNolo Banca Sella GestPay Pro - Fraud Prevention by RED</label>
+
+                <field id="enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable RED</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate Fraud Prevention by RED]]>
+                    </comment>
+                </field>
+
+                <field id="customer_info" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Customer Info Tag</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Send Customer Info Tag]]>
+                    </comment>
+                </field>
+
+                <field id="shipping_info" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Shipping Info Tag</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Send Shipping Info Tag]]>
+                    </comment>
+                </field>
+
+                <field id="billing_info" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Billing Info Tag</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Send Billing Info Tag]]>
+                    </comment>
+                </field>
+
+                <field id="customer_data" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Customer Data Tag</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Send Customer Data Tag]]>
+                    </comment>
+                </field>
+
+                <field id="order_items" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Items Tag</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Send Items Tag]]>
+                    </comment>
+                </field>
+
+                <field id="merchant_id" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Merchant ID</label>
+                    <comment>
+                        <![CDATA[Optional - Only for merchant with a specific set of rules (Code provided by Sella)]]>
+                    </comment>
+                </field>
+
+                <field id="service_type" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Service Type</label>
+                    <comment>
+                        <![CDATA[Optional - Only for merchant with a specific set of rules (Code provided by Sella)]]>
+                    </comment>
+                </field>
+
+                <field id="deny_order_status" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Deny Order Status</label>
+                    <source_model>EasyNolo\BancaSellaPro\Model\Config\Source\OrderStatus</source_model>
+                </field>
+
+                <field id="challenge_order_status" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Challenge Order Status</label>
+                    <source_model>EasyNolo\BancaSellaPro\Model\Config\Source\OrderStatus</source_model>
+                </field>
+            </group>
+
+
+            <group id="easynolo_bancasellapro_riskified" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>EasyNolo Banca Sella GestPay Pro - Fraud Prevention by Riskified</label>
+
+                <field id="enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Riskified</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate Fraud Prevention by Riskified]]>
+                    </comment>
+                </field>
+
+                <field id="customer_data" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Customer Detail Tag</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Send Customer Detail Tag]]>
+                    </comment>
+                </field>
+
+                <field id="shipping_info" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Shipping Info Tag</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Send Shipping Info Tag]]>
+                    </comment>
+                </field>
+
+                <field id="billing_info" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Billing Info Tag</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Send Billing Info Tag]]>
+                    </comment>
+                </field>
+
+                <field id="product_details" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Product Details Tag</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Send Product Details Tag]]>
+                    </comment>
+                </field>
+
+                <field id="declined_order_status" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Declined Order Status</label>
+                    <source_model>EasyNolo\BancaSellaPro\Model\Config\Source\OrderStatus</source_model>
+                </field>
+
+                <field id="submitted_order_status" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Submitted Order Status</label>
+                    <source_model>EasyNolo\BancaSellaPro\Model\Config\Source\OrderStatus</source_model>
+                </field>
+            </group>
+
+            <group id="easynolo_bancasellapro_alternative" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>EasyNolo Banca Sella GestPay Pro Alternative Payments</label>
+
+                <field id="enable_alipay" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Alipay</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate Alipay integration]]>
+                    </comment>
+                </field>
+
+                <field id="enable_consel" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Consel</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate Consel integration]]>
+                    </comment>
+                </field>
+
+                <field id="consel_promocode" translate="label" type="text" sortOrder="22" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Consel - Merchant Promotional Code</label>
+                    <comment>
+                        <![CDATA[Mandatory to show Consel in the pagam's Payment Method]]>
+                    </comment>
+                </field>
+
+                <field id="enable_eps" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable EPS</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate EPS integration]]>
+                    </comment>
+                </field>
+
+                <field id="enable_giropay" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Giropay</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate Giropay integration]]>
+                    </comment>
+                </field>
+
+                <field id="enable_mybank" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable MyBank</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate MyBank integration]]>
+                    </comment>
+                </field>
+
+                <field id="enable_ideal" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable IDeal</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate IDeal integration]]>
+                    </comment>
+                </field>
+
+                <field id="enable_klarna" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Klarna</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate Klarna integration]]>
+                    </comment>
+                </field>
+
+                <field id="enable_konbini" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Konbini</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate Konbini integration]]>
+                    </comment>
+                </field>
+
+
+                <field id="enable_mercadopago" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Konbini</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate MercadoPago integration]]>
+                    </comment>
+                </field>
+
+
+                <field id="enable_multibanco" translate="label" type="select" sortOrder="115" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Multibanco</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate Multibanco integration]]>
+                    </comment>
+                </field>
+
+                <field id="enable_paypal" translate="label" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Paypal</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate Paypal integration]]>
+                    </comment>
+                </field>
+
+                <field id="paypal_show_product_info" translate="label" type="select" sortOrder="121" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Paypal - Show product info</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Enable Paypal product info]]>
+                    </comment>
+                </field>
+
+
+                <field id="paypal_seller_protection" translate="label" type="select" sortOrder="123" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Paypal - Seller Protection</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Enable Paypal seller protection]]>
+                    </comment>
+                </field>
+
+
+
+                <field id="enable_paysafecard" translate="label" type="select" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Paysafecard</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate Paysafecard integration]]>
+                    </comment>
+                </field>
+
+                <field id="enable_qiwi" translate="label" type="select" sortOrder="135" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable QIWI</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate QIWI integration]]>
+                    </comment>
+                </field>
+
+                <field id="enable_sofort" translate="label" type="select" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Sofort</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate Sofort integration]]>
+                    </comment>
+                </field>
+
+                <field id="enable_tenpay" translate="label" type="select" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable TenPay</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate TenPay integration]]>
+                    </comment>
+                </field>
+
+                <field id="enable_timpersonal" translate="label" type="select" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable TIMpersonal</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate TIMpersonal integration]]>
+                    </comment>
+                </field>
+
+                <field id="enable_unionpay" translate="label" type="select" sortOrder="170" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable UnionPay</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate UnionPay integration]]>
+                    </comment>
+                </field>
+
+                <field id="enable_webmoney" translate="label" type="select" sortOrder="180" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable WebMoney</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate WebMoney integration]]>
+                    </comment>
+                </field>
+
+                <field id="enable_yandex" translate="label" type="select" sortOrder="190" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Yandex</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Flag to activate Yandex integration]]>
+                    </comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

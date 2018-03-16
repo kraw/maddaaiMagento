@@ -1,0 +1,62 @@
+<div class="payment-method" data-bind="css: {'_active': (getCode() == isChecked())}">
+    <div class="payment-method-title field choice">
+        <input type="radio"
+               name="payment[method]"
+               class="radio"
+               data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"/>
+        <label data-bind="attr: {'for': getCode()}" class="label"><span data-bind="text: getTitle()"></span></label>
+    </div>
+    <div class="payment-method-content">
+        <!-- ko foreach: getRegion('messages') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!--/ko-->
+        <div class="payment-method-billing-address">
+            <!-- ko foreach: $parent.getRegion(getBillingAddressFormName()) -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
+
+        <form class="form" data-bind="attr: {'id': getCode() + '-form'}">
+            <br/>
+            <div data-bind="ifnot: window.checkoutConfig.payment.easynolo_bancasellapro.is_iframe_enabled">
+                <em data-bind="text: checkoutConfig.payment.easynolo_bancasellapro.description"></em>
+            </div>
+            <div id="alternative-payments-wrapper" data-bind="visible: window.checkoutConfig.payment.easynolo_bancasellapro.alternatives.length > 0">
+                <!-- ko template: 'EasyNolo_BancaSellaPro/payment/alternative-form'  --><!-- /ko -->
+            </div>
+            <div id="credit-card-payment-wrapper" data-bind="if: window.checkoutConfig.payment.easynolo_bancasellapro.is_iframe_enabled">
+                <div id="credit-cards-wrapper" data-bind="visible: window.checkoutConfig.payment.easynolo_bancasellapro.tokens.length > 0">
+                    <!-- ko template: 'EasyNolo_BancaSellaPro/payment/tokens-form'  --><!-- /ko -->
+                </div>
+                <div id="new-credit-card-wrapper" data-bind="visible: window.checkoutConfig.payment.easynolo_bancasellapro.tokens.length == 0">
+                    <!-- ko template: 'EasyNolo_BancaSellaPro/payment/cc-form' --><!-- /ko -->
+                </div>
+            </div>
+        </form>
+
+        <div class="actions-toolbar">
+            <div class="primary">
+                <button class="action primary checkout"
+                        type="submit"
+                        data-bind="
+                        click: placeOrder,
+                        attr: {title: $t('Place Order')},
+                        css: {disabled: !isPlaceOrderActionAllowed()},
+                        enable: (getCode() == isChecked())
+                        "
+                        disabled>
+                    <!-- ko if: window.checkoutConfig.payment.easynolo_bancasellapro.is_iframe_enabled -->
+                    <span data-bind="text: $t('Place Order')"></span>
+                    <!-- /ko -->
+                    <!-- ko ifnot: window.checkoutConfig.payment.easynolo_bancasellapro.is_iframe_enabled -->
+                    <span data-bind="text: $t('Continue to Banca Sella')"></span>
+                    <!-- /ko -->
+                </button>
+            </div>
+        </div>
+
+        <div id="3d-modal" style="position: relative; min-height: 400px; display: none;">
+            <iframe style="width: 100%;height: 100%;position: absolute;top: 0;left: 0;bottom: 0;right: 0;border: none;" id="3d-modal-iframe"></iframe>
+        </div>
+    </div>
+</div>

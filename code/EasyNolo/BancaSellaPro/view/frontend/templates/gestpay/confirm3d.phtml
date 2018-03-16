@@ -1,0 +1,27 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: maintux
+ * Date: 05/02/17
+ * Time: 15:10
+ */
+
+?>
+
+<h1><?php echo __('You will be redirected to the payment system website in a few seconds.') ?></h1>
+<div>
+    <p><?php echo __('You are redirecting to issuing bank for 3d authentication') ?></p>
+</div>
+
+<script type="text/javascript">
+    //<![CDATA[
+    var reg = parent.requirejs('uiRegistry');
+    g = reg.get('checkout.steps.billing-step.payment.payments-list.easynolo_bancasellapro');
+    if(!g){
+        parent.location.href = '<?php echo $this->getUrl('checkout/cart', ['_secure' => $this->getRequest()->isSecure()]); ?>';
+    } else {
+        g.modal3d.closeModal();
+        g.sendPaRes('<?php echo $this->getRequest()->getParam('PaRes') ?>');
+    }
+    //]]>
+</script>

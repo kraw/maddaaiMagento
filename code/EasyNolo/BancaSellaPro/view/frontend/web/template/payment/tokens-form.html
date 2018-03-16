@@ -1,0 +1,32 @@
+<h4 data-bind="text: $t('Your credit cards')"></h4>
+<table style="width: 50%" id="credit-cards-table">
+    <thead>
+    <tr>
+        <th>&nbsp;</th>
+        <th data-bind="text: $t('Card')"></th>
+        <th data-bind="text: $t('Expiration')"></th>
+        <th>&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody>
+        <!-- ko foreach: window.checkoutConfig.payment.easynolo_bancasellapro.tokens -->
+        <tr>
+            <td style="vertical-align: middle;">
+                <input type="radio" name="bancasella_iframe[token]" style="margin-right: 4px;" data-bind="{value: id, checked: window.checkoutConfig.payment.easynolo_bancasellapro.tokens[0].id}" autocomplete="off" />
+            </td>
+            <td style="vertical-align: middle;" data-bind="text: token"></td>
+            <td style="vertical-align: middle;"><span class="nobr" data-bind="text: expiration"></span></td>
+            <td style="vertical-align: middle;" class="last">
+                <span data-bind="attr: {title: vendor.label}">
+                    <i style="font-family: PaymentFont;font-style: normal;font-size: 25px;" data-bind="attr: {class: 'pf-' + vendor.id}"></i>
+                </span>
+            </td>
+        </tr>
+        <!-- /ko -->
+        <tr>
+            <td colspan="4">
+                <a href="#" data-bind="click: function(){jQuery('#credit-cards-wrapper').hide();jQuery('#new-credit-card-wrapper').show();}, text: $t('Use new card');"></a>
+            </td>
+        </tr>
+    </tbody>
+</table>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Created by PhpStorm.
+ * User: maintux
+ * Date: 22/01/17
+ * Time: 09:30
+ */
+-->
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <!--Remove Magento page content-->
+        <referenceContainer name="page.wrapper" remove="true"/>
+        <referenceContainer name="root">
+            <block name="confirm3d" class="Magento\Framework\View\Element\Template" template="EasyNolo_BancaSellaPro::gestpay/confirm3d.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

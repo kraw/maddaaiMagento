@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Created by PhpStorm.
+ * User: maintux
+ * Date: 22/01/17
+ * Time: 09:30
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <virtualType name="EasyNolo\BancaSellaPro\Model\CcConfigProvider" type="Magento\Payment\Model\CcGenericConfigProvider">
+        <arguments>
+            <argument name="methodCodes" xsi:type="array">
+                <item name="easynolo_bancasellapro" xsi:type="const">EasyNolo\BancaSellaPro\Model\Gestpay::CODE</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Checkout\Model\CompositeConfigProvider">
+        <arguments>
+            <argument name="configProviders" xsi:type="array">
+                <item name="easynolo_bancasellapro_cc" xsi:type="object">EasyNolo\BancaSellaPro\Model\CcConfigProvider</item>
+                <item name="easynolo_bancasellapro" xsi:type="object">EasyNolo\BancaSellaPro\Model\GestpayConfigProvider</item>
+            </argument>
+        </arguments>
+    </type>
+
+</config>

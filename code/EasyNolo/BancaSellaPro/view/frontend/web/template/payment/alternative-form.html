@@ -1,0 +1,13 @@
+<h4 data-bind="text: $t('Payment Type')"></h4>
+<div id="alternative-payments">
+    <select style="width: 50%" name="alternative-payment" id="alternative-payments-select" data-bind="event: {change: function() { window.alternativePaymentMethodChange(); }}">
+        <option value="">Credit Card</option>
+        <!-- ko foreach: window.checkoutConfig.payment.easynolo_bancasellapro.alternatives -->
+        <option data-bind="{value: code, text: title}"></option>
+        <!-- /ko -->
+    </select>
+    <!-- ko foreach: window.checkoutConfig.payment.easynolo_bancasellapro.alternatives -->
+    <div style="display: none" data-bind="{attr: {id: 'alternative-payment-' + code}, html: form}">
+    </div>
+    <!-- /ko -->
+</div>

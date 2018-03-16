@@ -1,0 +1,45 @@
+<?php
+
+$_code = $this->getCode();
+$_address = $this->getAddress();
+$countryCode = $_address->getCountry();
+$city = $_address->getCity();
+$postCode = $_address->getPostcode();
+
+?>
+<li class="gestpay-form-field alternative-method alternative-method-<?php echo $_code; ?>">
+    <label for="gestpay_<?php echo $_code ?>_social_security_number" class="required"><?php echo __('Social security number') ?></label>
+    <div class="input-box">
+        <input type="text" id="gestpay_<?php echo $_code ?>_social_security_number" name="payment[social_security_number]" title="<?php echo __('Social security number') ?>" class="input-text required-entry" value="" />
+    </div>
+</li>
+<li class="gestpay-form-field alternative-method alternative-method-<?php echo $_code; ?>">
+    <label for="gestpay_<?php echo $_code ?>_street_name" class="required"><?php echo __('Shipping street name') ?></label>
+    <div class="input-box">
+        <input type="text" id="gestpay_<?php echo $_code ?>_street_name" name="payment[klarna_street]" title="<?php echo __('Shipping street name') ?>" class="input-text required-entry" value="" />
+    </div>
+</li>
+<?php if($countryCode != 'DE' && $countryCode != 'NL' ): ?>
+    <li class="gestpay-form-field alternative-method alternative-method-<?php echo $this->getCode(); ?>" style="display: none">
+        <label for="gestpay_<?php echo $_code ?>_street_number" class="required"><?php echo __('Shipping street number') ?></label>
+        <div class="input-box">
+            <input type="text" id="gestpay_<?php echo $_code ?>_street_number" name="payment[klarna_street_number]" title="<?php echo __('Shipping street number') ?>" class="input-text required-entry alternative-method-input" value="" />
+        </div>
+    </li>
+<?php endif; ?>
+<?php if($countryCode == 'DE' || $countryCode == 'NL' ): ?>
+    <li class="gestpay-form-field alternative-method alternative-method-<?php echo $this->getCode(); ?>" style="display: none">
+        <label for="gestpay_<?php echo $_code ?>_house_number" class="required"><?php echo __('Shipping house number') ?></label>
+        <div class="input-box">
+            <input type="text" id="gestpay_<?php echo $_code ?>_house_number" name="payment[klarna_house_number]" title="<?php echo __('Shipping house number') ?>" class="input-text required-entry alternative-method-input" value="" />
+        </div>
+    </li>
+<?php endif; ?>
+<?php if($countryCode == 'NL' ): ?>
+    <li class="gestpay-form-field alternative-method alternative-method-<?php echo $this->getCode(); ?>" style="display: none">
+        <label for="gestpay_<?php echo $_code ?>_house_extension" class="required"><?php echo __('Shipping house extension') ?></label>
+        <div class="input-box">
+            <input type="text" id="gestpay_<?php echo $_code ?>_house_extension" name="payment[klarna_house_extension]" title="<?php echo __('Shipping house extension') ?>" class="input-text required-entry alternative-method-input" value="" />
+        </div>
+    </li>
+<?php endif; ?>
