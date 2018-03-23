@@ -38,7 +38,7 @@ class Bid extends \Magento\Framework\View\Element\Template
 
 		$collection = $productCollection->create()
 	            ->addAttributeToSelect('*')
-		    ->addAttributeToFilter("bid_concluso", "1")
+		        ->addAttributeToFilter("bid_concluso", "1")
         	    ->load();
 		
 		return $collection;

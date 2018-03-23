@@ -9,7 +9,7 @@
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="header.panel">
-            <block class="Magento\Framework\View\Element\Html\Links" name="header.links">
+            <block class="Magento\Framework\View\Element\Html\Links" name="header.links" >
                 <arguments>
                     <argument name="css_class" xsi:type="string">header links</argument>
                 </arguments>

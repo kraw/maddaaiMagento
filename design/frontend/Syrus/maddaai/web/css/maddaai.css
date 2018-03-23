@@ -3,11 +3,7 @@ body{
 }
 
 .page-header{
- background: url("http://magento2-demo.nexcess.net/pub/media/wysiwyg/home/home-main.jpg") no-repeat center center fixed; 
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+ background-color: #eb6703;
  margin-top: -40px;
 }
 
@@ -39,5 +35,22 @@ body{
 }
 
 .product-options-bottom .price-box .price-container .price, .product-info-price .price-box .price-container .price{
-    color: #EB6445!important;
+    color: #eb6703!important;
+}
+
+.bid-alert-bar-color{
+    background-color: #eb6703;
+    color: #FFFFFF;
+    max-width: 100%;
+    text-align: center;
+    float: inherit;
+}
+
+.action.primary {
+    background: #eb6703!important;
+    border: 1px solid #eb6703!important;
+}
+
+.copyright {
+    background-color: #eb6703!important;
 }

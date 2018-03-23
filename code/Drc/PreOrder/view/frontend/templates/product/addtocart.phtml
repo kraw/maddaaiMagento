@@ -76,8 +76,7 @@ $buttonTitle = $block->getPreorderButtonText();
             <div class="product-item-link center-text" id="bid-time" style="text-align: center;"
                  href="<?php /* @escapeNotVerified */
                  echo $_product->getProductUrl() ?>">
-                <div class="swatch-option color"
-                     style="background-color: #EB6445;color: #FFFFFF;max-width: 100%;text-align: center;float: inherit;">
+                <div class="swatch-option bid-alert-bar-color">
                     Scade tra: <strong id="bid-timer" data-bidend="<?= $_product->getData('bid_end_date') ?>"></strong>
                 </div>
             </div><br>
@@ -142,6 +141,6 @@ $buttonTitle = $block->getPreorderButtonText();
             days + ' G ' + hours + ' h ' + minutes + ' n ' + seconds + ' s';
     }
 
-timer = setInterval(settimer, 1000); // update every second
+timer = setInterval(settimer, 1000);
 
 </script>

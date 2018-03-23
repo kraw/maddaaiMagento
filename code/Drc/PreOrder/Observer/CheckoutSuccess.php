@@ -1,6 +1,5 @@
 <?php
 namespace Drc\PreOrder\Observer;
-use Zend_Debug;
 
 class CheckoutSuccess implements \Magento\Framework\Event\ObserverInterface
 {

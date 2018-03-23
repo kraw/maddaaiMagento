@@ -48,7 +48,7 @@
                             <?php if ($block->showTimerBar($_item)) { ?>
                                 <div class="product-item-link center-text" id="bid-time" style="text-align: center;"
                                      href="<?php /* @escapeNotVerified */ echo $_item->getProductUrl() ?>">
-                                    <div class="swatch-option color" style="background-color: #eb6703;color: #FFFFFF;max-width: 100%;text-align: center;float: inherit;">
+                                    <div class="swatch-option color bid-alert-bar-color">
                                         <?php /* @escapeNotVerified */ echo __('Scade tra: ') ?><strong id="bid-timer-<?=$_item->getSku()?>"
                                                            data-bidend="<?=$_item->getData('bid_end_date')?>"></strong>
                                     </div>
@@ -131,41 +131,3 @@
         </div>
     </div>
 <?php endif;?>
-
-
-<script type="text/javascript">
-
-
-    require(['jquery'], function($){
-        $( document ).ready(function() {
-            function bidCountdown() {
-                $('#bid-time [id^="bid-timer-"]').each(function () {
-                    var id = this.id;
-                    var val = $(this).data("bidend").split(" ");
-                    var end = new Date(val[0]);
-                    var second = 1000;
-                    var minute = second * 60;
-                    var hour = minute * 60;
-                    var day = hour * 24;
-                    var now = new Date();
-                    var remain = end - now;
-                    if (remain < 0) {
-                        clearInterval(timer);
-                        // Qua deve scattare il trigger di fine bid
-                        document.getElementById(id).innerHTML = 'Concluso!';
-                        return;
-                    }
-                    var days = Math.floor(remain / day);
-                    var hours = Math.floor((remain % day) / hour);
-                    var minutes = Math.floor((remain % hour) / minute);
-                    var seconds = Math.floor((remain % minute) / second);
-
-                    document.getElementById(id).innerHTML =
-                        days + ' G ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
-                });
-            }
-            setInterval(bidCountdown, 1000); // update every second
-        });
-
-    });
-</script>

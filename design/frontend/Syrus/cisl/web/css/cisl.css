@@ -1,0 +1,20 @@
+.page-header{
+ background-color: #187d50;
+}
+
+.product-options-bottom .price-box .price-container .price, .product-info-price .price-box .price-container .price{
+    color: #187d50!important;
+}
+
+.bid-alert-bar-color{
+    background-color: #187d50!important;
+}
+
+.action.primary {
+    background: #187d50!important;
+    border: 1px solid #187d50!important;
+}
+
+.copyright {
+    background-color: #187d50!important;
+}

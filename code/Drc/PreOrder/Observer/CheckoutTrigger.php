@@ -67,13 +67,10 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
 
 
         $imageHelperFactory = $objectManager->create("\Magento\Catalog\Helper\ImageFactory");
-        //  Zend_Debug::dump(get_class_methods($this->_context));
-
 
         $customerData = $this->_session->getCustomerData();
         $logged = $this->_session->isLoggedIn();
 
-//    Zend_Debug::dump("is logged = ".$logged);
 
         if ($logged) {
 
@@ -241,11 +238,11 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
                         $quantita = $prag['quantita'];
 
                         //send email customers
-                        Zend_Debug::dump($email);
+                       // Zend_Debug::dump($email);
                         $this->send($email, $token, $id_customer, $base_url, $url_image, $id_preorder, $id, $quantita);
                     }
 
-                    $this->send('maddaai.store@gmail.com', "", "", $base_url, $url_image, 0, $id, 0);
+                 //   $this->send('maddaai.store@gmail.com', "", "", $base_url, $url_image, 0, $id, 0);
                 }
             }
 
@@ -268,7 +265,6 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
     }
 
 
-    //============ UTILITY ============== //
 
     public function getStoreName()
     {
@@ -341,7 +337,9 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
     }
 
 
-    //controlla se esiste il cliente nella tabella, se si ritorna il credit
+    /*
+    * Controlla se esiste il cliente nella tabella, se si ritorna il credit
+    */
     private function existsCustomer($customer_id, $mese, $connection, $tableName)
     {
         $sql = "SELECT credit, data FROM " . $tableName . " WHERE id_customer = $customer_id LIMIT 1";

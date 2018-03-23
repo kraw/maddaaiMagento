@@ -1,16 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: georgeson
- * Date: 15/02/17
- * Time: 16:52
- */
+
 
 namespace Drc\PreOrder\Observer;
 use Magento\Framework\Event\ObserverInterface;
-
-use Magento\Catalog\Model\Product;
-use Magento\Checkout\Model\Cart;
 
 class BidIncrease implements ObserverInterface{
 
