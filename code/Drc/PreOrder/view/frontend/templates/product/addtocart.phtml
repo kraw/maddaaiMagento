@@ -13,10 +13,7 @@ $_product = $block->getProduct();
 $id = $_product->getId();
 $quantity = $block->getStockItem($id);
 
-$likes = $_product->getData("valutation_product_likes");
-
 $isValutationProduct = $block->isValutationProduct($_product);
-
 
 $active = $this->helper('Drc\PreOrder\Helper\Check')->checkEnable();
 $buttonTitle = $block->getPreorderButtonText();
@@ -24,6 +21,7 @@ $buttonTitle = $block->getPreorderButtonText();
 
 <!-- if it's a valutation product -->
 <?php if ($isValutationProduct):
+    $likes = $_product->getData("valutation_product_likes");
     $buttonTitle = __("Like");
     ?>
     <div class="stock available">

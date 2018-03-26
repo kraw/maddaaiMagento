@@ -8,7 +8,7 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
 {
 
     protected $_storeManager;
-    protected $_stockRegistry;
+
 
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
@@ -16,7 +16,7 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
         \Magento\Customer\Model\Session $session,
         \Magento\Checkout\Model\Cart $cart,
         \Magento\Framework\Mail\Template\TransportBuilder $_transportBuilder,
-        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
+        \Magento\CatalogInventory\Model\Stock\StockItemRepository $stockItemRepository,
         \Magento\Framework\App\ResponseFactory $responseFactory,
         \Magento\Customer\Model\AccountManagement $acm,
         \Drc\PreOrder\Model\PreorderPendingFactory $pre,
@@ -36,7 +36,7 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
         $this->_pre = $pre;
         $this->_preModel = $preModel;
         $this->_productLoader = $productLoader;
-        $this->_stockRegistry = $stockRegistry;
+        $this->_stockItemRepository = $stockItemRepository;
         $this->customerRepository = $customerRepository;
 
     }
@@ -70,6 +70,7 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
 
         $customerData = $this->_session->getCustomerData();
         $logged = $this->_session->isLoggedIn();
+
 
         if ($logged) {
 
@@ -166,7 +167,7 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
 
 
                 //TODO da rifare
-                $product_stock = $this->getStockItem($prodotto->getId());
+                $product_stock = $this->_stockItemRepository->get(11);
                 $stock = $product_stock->getQty(); //quantità in stock
 
 
@@ -680,11 +681,5 @@ class CheckoutTrigger implements \Magento\Framework\Event\ObserverInterface
     public function isUserLogged(){
         return $this->_session->isLoggedIn();
     }
-
-    public function getStockItem($productId)
-    {
-        return $this->_stockRegistry->getStockItem($productId);
-    }
-
 
 }

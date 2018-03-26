@@ -10,10 +10,10 @@ use Magento\Catalog\Pricing\Price\ConfiguredPriceInterface;
 
 class Cart extends \Magento\Checkout\Block\Cart\Item\Renderer
 {
-    protected $_stockItemRepository;
+    protected $_stockRegistry;
     protected $scopeConfig;
     public function __construct(
-        \Magento\CatalogInventory\Model\Stock\StockItemRepository $stockItemRepository,        
+        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Catalog\Helper\Product\Configuration $productConfig,
         \Magento\Checkout\Model\Session $checkoutSession,
@@ -25,19 +25,18 @@ class Cart extends \Magento\Checkout\Block\Cart\Item\Renderer
         InterpretationStrategyInterface $messageInterpretationStrategy,
         array $data = []
     ) {
-        $this->_stockItemRepository = $stockItemRepository;
+        $this->_stockRegistry = $stockRegistry;
         $this->scopeConfig = $context->getScopeConfig();
         parent::__construct($context, $productConfig, $checkoutSession, $imageBuilder, $urlHelper, $messageManager, $priceCurrency, $moduleManager, $messageInterpretationStrategy, $data);
     }
 
     /**
-     * TODO Da cambiare
      * @param $productId
      * @return \Magento\CatalogInventory\Api\Data\StockItemInterface
      */
     public function getStockItem($productId)
     {
-        return $this->_stockItemRepository->get(11);
+        return $this->_stockRegistry->getStockItem($productId);
     }
     public function getPreorderNote()
     {

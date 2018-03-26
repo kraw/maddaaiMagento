@@ -13,13 +13,13 @@ require(['jquery', 'popper', 'tether'], function($, Popper, Tether) {
         if ( $('#bid-time').length )
             // update every second
             setInterval(displayProductsTimer, 1000);
-        else if ( $('#bid-time').length )
+        else if ( $('#bid-timer').val() )
             setInterval(displayProductTimer, 1000);
     });
 
 
     function displayProductTimer() {
-        var prod = document.getElementById('bid-timer');
+        var prod = $('#bid-timer').val();
         var end = new Date(prod.dataset.bidend);
         displayTimer(prod, end);
     }

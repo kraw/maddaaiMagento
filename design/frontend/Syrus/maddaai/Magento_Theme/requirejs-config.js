@@ -14,5 +14,6 @@ var config = {
         'bootstrap': {
             'deps': ['jquery', 'popper']
         }
-    }
+    },
+
 };

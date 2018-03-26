@@ -18,7 +18,6 @@ class CheckoutSuccess implements \Magento\Framework\Event\ObserverInterface
   public function execute(\Magento\Framework\Event\Observer $observer){
 
     $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-
     $session = $objectManager->create("\Magento\Customer\Model\Session");
     $customerData = $session->getCustomerData();
     $id_customer = $customerData->getId();

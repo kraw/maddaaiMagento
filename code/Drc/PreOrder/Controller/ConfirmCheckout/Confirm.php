@@ -126,9 +126,9 @@ public function getItemModel(){
 		$attivo = $pre['acquistabile'];
         $deleted = $pre['deleted'];
 
-        Zend_Debug::dump($attivo);
-        Zend_Debug::dump($deleted);
-        Zend_Debug::dump($token);
+     //   Zend_Debug::dump($attivo);
+      //  Zend_Debug::dump($deleted);
+      //  Zend_Debug::dump($token);
 
         if($deleted == "0"){
 

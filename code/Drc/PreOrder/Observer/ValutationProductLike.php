@@ -82,8 +82,8 @@ class ValutationProductLike implements ObserverInterface
         $product = $this->_objectManager->create("Magento\Catalog\Model\Product")->load($product);
 
         if(!$this->isValutationProduct($product)){
-            $this->_messageManager->addError(self::ALREADY_LIKE_IT);
-            $observer->getRequest()->setParam('product', false);
+            $redirectUrl = $product->getProductUrl();
+            $this->_responseFactory->create()->setRedirect($redirectUrl)->sendResponse();
             return $this;
         }
 
@@ -123,7 +123,7 @@ class ValutationProductLike implements ObserverInterface
 
 
     /**
-     * Check if customers is autenticate
+     * Check if customers is authenticate
      * @return bool
      */
     public function isUserLogged()
