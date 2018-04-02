@@ -12,42 +12,41 @@
 $helper = $this->helper('Magento\Search\Helper\Data');
 ?>
 
-<div class="block block-search" style="width: 50%;">
-    <div class="block block-title"><strong><?php /* @escapeNotVerified */ echo __('Search'); ?></strong></div>
-    <div class="block block-content">
-        <form class="form minisearch" id="search_mini_form" action="<?php /* @escapeNotVerified */ echo $helper->getResultUrl() ?>" method="get">
-            <div class="field search">
-                <label class="label" for="search" data-role="minisearch-label">
-                    <span><?php /* @escapeNotVerified */ echo __('Search'); ?></span>
-                </label>
-                <div class="control">
-                    <input id="search"
-                           data-mage-init='{"quickSearch":{
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="custom-search-input">
+                    <form id="search_mini_form" action="<?php /* @escapeNotVerified */ echo $helper->getResultUrl() ?>" method="get">
+                        <div class="input-group">
+                        <input id="search"
+                               data-mage-init='{"quickSearch":{
                                 "formSelector":"#search_mini_form",
                                 "url":"<?php /* @escapeNotVerified */ echo $block->getUrl('search/ajax/suggest', ['_secure' => $block->getRequest()->isSecure()]); ?>",
                                 "destinationSelector":"#search_autocomplete"}
                            }'
-                           type="text"
-                           name="<?php /* @escapeNotVerified */ echo $helper->getQueryParamName() ?>"
-                           value="<?php /* @escapeNotVerified */ echo $helper->getEscapedQueryText() ?>"
-                           placeholder="<?php /* @escapeNotVerified */ echo __('Search entire store here...'); ?>"
-                           class="input-text"
-                           maxlength="<?php /* @escapeNotVerified */ echo $helper->getMaxQueryLength();?>"
-                           role="combobox"
-                           aria-haspopup="false"
-                           aria-autocomplete="both"
-                           autocomplete="off"/>
-                    <div id="search_autocomplete" class="search-autocomplete"></div>
-                    <?php echo $block->getChildHtml() ?>
-                </div>
-            </div>
-            <div class="actions">
-                <button type="submit"
-                        title="<?php echo $block->escapeHtml(__('Search')) ?>"
-                        class="action search">
-                    <span><?php /* @escapeNotVerified */ echo __('Search'); ?></span>
-                </button>
-            </div>
-        </form>
+                               type="text"
+                               name="<?php /* @escapeNotVerified */ echo $helper->getQueryParamName() ?>"
+                               value="<?php /* @escapeNotVerified */ echo $helper->getEscapedQueryText() ?>"
+                               placeholder="<?php /* @escapeNotVerified */ echo __('Search entire store here...'); ?>"
+                               class="form-control input-lg"
+                               maxlength="<?php /* @escapeNotVerified */ echo $helper->getMaxQueryLength();?>"
+                               size="<?php /* @escapeNotVerified */ echo $helper->getMaxQueryLength();?>"
+                               role="combobox"
+                               aria-haspopup="false"
+                               aria-autocomplete="both"
+                               autocomplete="off"
+                        />
+                        <span class="input-group-btn">
+                         <button class="btn btn-info btn-lg" type="submit"
+                                 title="<?php echo $block->escapeHtml(__('Search')) ?>">
+                                <i class="fa fa-search"></i>
+                         </button>
+                    </span>
+                        <div id="search_autocomplete" class="search-autocomplete"></div><?php echo $block->getChildHtml() ?>
+                        </div>
+                    </form>
+        </div>
     </div>
 </div>
+
